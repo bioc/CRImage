@@ -1,0 +1,170 @@
+% \VignetteIndexEntry{CRImage Manual}
+% \VignetteDepends{EBImage, MASS, e1071, foreach}
+% \VignetteKeyword{CRImage}
+% \VignettePackage{CRImage} 
+\documentclass[10pt]{article}
+\topmargin 0.0cm
+\oddsidemargin 0.5cm
+\evensidemargin 0.5cm
+\textwidth 16cm 
+\textheight 21cm
+
+\usepackage[labelfont=bf,labelsep=period,justification=raggedright]{caption}
+
+\newcommand{\Rfunction}[1]{{\mbox{\normalfont\texttt{#1}}}}
+
+\begin{document}
+
+\begin{flushleft}
+\begin{center}
+{\LARGE \bf CRImage \\ a package for classifying cells and calculating tumour cellularity\\}
+
+\bigskip
+Henrik Failmezger$^{\ast}$, Yinyin Yuan, Florian Markowetz \\
+\bigskip
+$\ast$ E-mail: failmezger@cip.ifi.lmu.de
+\end{center}
+\end{flushleft}
+\tableofcontents
+\section{Load the package}
+The package is loaded by the following command:
+<<>>=
+library(CRImage)
+@
+See the functions of the package EBImage to read, write and manipulate an image.
+\section{Threshold an image}
+To create a binary image of a coloured image the function \Rfunction{calculateThreshold} can be used. This function calculates Otsu threshold of a grayscale image.
+<<results=hide>>=
+f = system.file("extdata", "exImg2.jpg", package="CRImage")
+exImgB=readImage(f)
+#find white pixels and exclude them from thresholding(if white is background)
+indexWhitePixel=which(exImgB[,,1]>0.85 & exImgB[,,2]>0.85 & exImgB[,,3]>0.85)
+#convert to grayscale
+exImgB=channel(exImgB,"gray")
+#calculate threshold
+t=calculateThreshold(as.vector(exImgB[-indexWhitePixel]))
+#create binary image
+exImgB[which(exImgB>=t)]=1
+exImgB[which(exImgB<t)]=0
+@
+The image is read with \Rfunction{readImage}. \Rfunction{indexWhitePixel} finds white pixels in the image. These pixels are considered as background and excluded from thresholding.  The image is converted to grayscale by the function \Rfunction{channel(exImgB,"gray")} of EBImage and thresholded with \Rfunction{calculateThreshold}. The binary image is created by finding pixels with gray values larger or smaller than the threshold and colouring them black or white.
+
+\begin{figure}
+\centerline{\includegraphics[width=0.5\textwidth]{imgB}}
+\caption{Thresholded image. Cell nuclei are coloured white, background is coloured black.}
+\label{fig1}
+\end{figure}
+\section{Segment an image}
+An image can be segmented to find cells in the image, using the function \Rfunction{segmentImage}.
+<<results=hide>>=
+f = system.file("extdata", "exImg2.jpg", package="CRImage")
+segmentationValues=segmentImage(f,maxShape=800,minShape=40,failureRegion=2000) 
+@
+The image is converted to grayscale and thresholded. Morphological opening is used to delete clutter and to smooth the shapes of the cells. The watershed algorithm is used to separate clustered cells. 
+The parameter \Rfunction{maxShape} defines the maximal shape of cell nuclei. Segmented nuclei which exceed this value will be thresholded and segmented again.
+The parameter \Rfunction{minShape} defines the minimum size if cell nuclei. Cell nuclei, which fall below this value will be deleted. 
+The parameter \Rfunction{failureRegion} defines, when artifacts in the image should be deleted. Dark regions which exceed this value will be deleted.
+The list element \Rfunction{segmentationValues[[1]]} holds the original image, \Rfunction{segmentationValues[[2]]} holds the segmented image and \Rfunction{segmentationValues[[3]]} holds features, which were calculated for the segmented objects. The segmented objects can be drawn by the function \Rfunction{display} (see EBImage).
+\begin{figure}
+\centerline{\includegraphics[width=0.5\textwidth]{segmentedImageRaw}
+\includegraphics[width=0.5\textwidth]{segmentedImage}}
+\caption{SegmentedImage. Cell nuclei are labeled in green.}
+\label{fig2}
+\end{figure}
+\section{Creating a training set}
+To classify cells in images first an appropriate training set has to be created.
+
+\begin{verbatim}
+	f = system.file("extdata", "exImg.jpg", package="CRImage")	
+	trainingValues=createTrainingSet(filename=f,maxShape=800,minShape=40,failureRegion=2000)
+\end{verbatim}
+The list trainingValues returns two values. The first value is an image in which every segmented cell is numbered. The second value is a table with features for every cell:
+\begin{verbatim}
+index class      g.x       g.y g.s g.p     g.pdm    g.pdsd    g.effr...
+1  		<NA>	148.2203  4.855932 118  36  5.721049 1.0130550  6.128668...
+2  		<NA> 	160.2719  4.763158 114  38  5.659780 1.0331399  6.023896...
+3  		<NA> 	183.7975  3.101266  79  35  4.593585 0.9575905  5.014627...
+4  		<NA> 	196.3500  4.242857 140  43  6.424591 1.4433233  6.675581...
+5  		<NA> 	271.5694  2.680556  72  29  4.504704 1.2490794  4.787307...
+6  		<NA> 	338.5221  6.530973 113  35  5.601531 1.0849651  5.997418...
+7  		<NA> 	456.0179  2.946429 112  39  5.726556 1.8101368  5.970821...
+8  		<NA> 	556.3778  9.018519 270  81  9.196894 2.4687870  9.270581...
+9  		<NA> 	575.1777 10.935950 484 101 11.959995 2.1378649 12.412171...
+10  	<NA> 	592.7391  1.724638  69  41  5.145094 2.2782539  4.686511...
+\end{verbatim}
+To create the training set, class values for the cells have to be inserted in the column "class":
+\begin{verbatim}
+index class      g.x       g.y g.s g.p     g.pdm    g.pdsd    g.effr
+1  		normal	148.2203  4.855932 118  36  5.721049 1.0130550  6.128668
+2  		malignant 	160.2719  4.763158 114  38  5.659780 1.0331399  6.023896
+\end{verbatim}
+ The values in the column "index" match the numbers for the cells in the image. You can save the table as tab seperated by:
+\begin{verbatim}
+write.table(trainingData,file="path",sep="\t",rownames=F)
+\end{verbatim}
+and open it for example in a spreadsheet program, however be careful not to shift the columns. You do not have to assign a class value to every cell, but do ensure that there are enough examples for every class. Class values can be numbers (e.g. 1,2,3) or strings (e.g. "normal", "malignant"). You can choose at most 10 classes. If you want to use the kernel smoothing approach for classification you can only choose two classes or you have to specifiy a cancer class, when classifying cells.
+\begin{figure}
+\centerline{\includegraphics[width=0.8\textwidth]{labeledImage}}
+\caption{The image with labeled cell nuclei. The number of the cell nuclei correspond to the index in the feature table.}
+\label{fig2.5}
+\end{figure}
+\section{Creating the classifier}
+The command:
+<<results=hide>>=
+f = system.file("extdata", "trainingData.txt", package="CRImage")
+#read training data
+trainingData=read.table(f,header=TRUE)
+#create classifier
+classifierValues=createClassifier(trainingData,topo=FALSE)
+classifier=classifierValues[[1]]
+#classifiedCells=classifierValues[[2]]
+#display(classifiedCells)
+@
+creates the classifier. The classifier is a Support Vector Machine provided by the package e1017. 
+\section{Classification of cells}
+After having created the classifier, cells in another image can be classified (Figure \ref{fig2}).
+<<results=hide>>=
+	#classify cells
+	f = system.file("extdata", "exImg2.jpg", package="CRImage")
+	classValues=classifyCells(classifier,filename=f,KS=TRUE,maxShape=800,minShape=40,failureRegion=2000)
+@
+\section{Calculation of cellularity}
+If tumour images are processed, the cellularity of the tumour can be calculated. The image is first segmented and the cell types are classified. Afterwards, the cellularity of the tumour is determined. The function needs to know, which class value should be the tumour class.
+<<results=hide>>=
+t = system.file("extdata", "trainingData.txt", package="CRImage")
+#read training data
+trainingData=read.table(t,header=TRUE)
+#create classifier
+classifier=createClassifier(trainingData,topo=FALSE)[[1]]
+#calculation of cellularity
+f = system.file("extdata", "exImg2.jpg", package="CRImage")
+exImg=readImage(f)
+cellularityValues=calculateCellularity(f,classifier=classifier,cancerIdentifier="1")
+@
+\begin{figure}[tpb]
+\centerline{\includegraphics[width=0.5\textwidth]{classifiedImage}
+\includegraphics[width=0.5\textwidth]{cellularity2}}
+\caption{Classified Image (left) and heatmap of cellularity values (right). Malignant cells are colored green, whereas other cells are coloured red. The heatmap of
+tumour cellularity indicates regions of large tumour cellularity (strong green values) and low tumour cellularity (white regions). }
+\label{fig3}
+\end{figure}
+\section{Classification of Aperio Image Slides}
+Large pathological images are often difficult to process due to their often large file size. Images of ScanScope TX scanner can be saved in the CWS file format. In this format the images are separated in smaller subimages. These images can be process with the function \Rfunction{processAperio}.
+<<results=hide>>=
+#create the classifier
+t = system.file("extdata", "trainingData.txt", package="CRImage")
+trainingData=read.table(t,header=TRUE)
+classifier=createClassifier(trainingData,topo=FALSE)[[1]]
+@
+<<eval=FALSE>>=
+dir.create("AperiOutput")
+f = system.file("extdata",  package="CRImage")
+#the image in CWS format
+f=file.path(f,"8905")
+processAperio(classifier=classifier,inputFolder=f,outputFolder="AperiOutput",identifier="Da",numSections=2,cancerIdentifier="c",maxShape=800,minShape=40,failureRegion=2000)
+@
+The function gets a classifier, which was for instance created with \Rfunction{createClassifier}. An input folder has to be specified, which includes the subimages. The common identifier of the subimages has tp specified (either "Da" or "Ss", depending on the adjustments of the Aperio software). If the image includes different sections for which cellularity has to be calculated separately, this can be specified with \Rfunction{numSections}, the function will afterwards do an automatical clustering of the subimages to their corresponding sections. The function needs to know, which class of the classifier is the tumour class, which is specified with \Rfunction{cancerIdentifier}.
+The function creates three folders in the output folder. The folder classifiedImage includes the classified subimages. The folder \Rfunction{Files} includes files with cellularity values for every section. The folder \Rfunction{tumourDensity} includes cancer heatmaps for every subimage.
+
+
+\end{document}
