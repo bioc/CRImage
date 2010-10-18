@@ -1,7 +1,7 @@
 Package: CRImage
 Type: Package
 Title: CRImage a package to classify cells and calculate tumour cellularity
-Version: 1.0.0
+Version: 1.1.0
 Date: 2010-05-03
 Author: Henrik Failmezger <failmezger@cip.ifi.lmu.de>, Yinyin Yuan <Yinyin.Yuan@cancer.org.uk>, Oscar Rueda <oscar.rueda@cancer.org.uk>,  Florian Markowetz <Florian.Markowetz@cancer.org.uk>
 Maintainer: Henrik Failmezger <failmezger@cip.ifi.lmu.de>, Yinyin Yuan <Yinyin.Yuan@cancer.org.uk>
