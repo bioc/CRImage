@@ -6,7 +6,7 @@
  The function segments cells or cell nuclei in the image.
 }
 \usage{
-segmentImage(filename = "", image = NA, maxShape = NA, minShape =NA, failureRegion = NA)
+segmentImage(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA,threshold="otsu",numWindows=2,classifyStructures=FALSE,pixelClassifier=NA)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,6 +15,10 @@ segmentImage(filename = "", image = NA, maxShape = NA, minShape =NA, failureRegi
   \item{maxShape}{Maximum size of cell nuclei}
   \item{minShape}{ Minimum size of cell nuclei }
   \item{failureRegion}{ minimum size of failure regions}
+  \item{threshold}{Thresholding method, "otsu" or "phansalkar"}
+\item{numWindows}{Number of windows to use for thresholding.}
+\item{classifyStructures}{Segment structures in the image, if yes a pixel classifier has to be defined}
+\item{pixelClassifier}{A SVM which classifies RGB color values in foreground and background.}
 }
 \details{
 The image is converted to greyscale and thresholded.
@@ -33,10 +37,10 @@ The image is converted to greyscale and thresholded.
 \author{ Henrik Failmezger, failmezger@cip.ifi.lmu.de }
 \examples{
 #segment image
-f = system.file('extdata' ,'exImg.jpg',package='CRImage')
-segmentationValues=segmentImage(f,maxShape=800,minShape=40,failureRegion=2000)
-image=segmentationValues[[1]]
-segmentedImage=segmentationValues[[2]]
-imageFeatures=segmentationValues[[3]]
+#f = system.file('extdata' ,'exImg.jpg',package='CRImage')
+#segmentationValues=segmentImage(f,maxShape=800,minShape=40,failureRegion=2000,threshold="otsu",numWindows=4)
+#image=segmentationValues[[1]]
+#segmentedImage=segmentationValues[[2]]
+#imageFeatures=segmentationValues[[3]]
 }
 \keyword{misc}

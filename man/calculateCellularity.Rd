@@ -5,7 +5,7 @@
 The function calculates the tumour cellularity of an image by counting tumour and non tumour cells.
 }
 \usage{
-calculateCellularity(filename = "", image = NA, classifier, cancerIdentifier, KS=FALSE,maxShape=NA,minShape=NA,failureRegion=NA)
+calculateCellularity(filename="",image=NA,classifier=NULL,cancerIdentifier=NA,KS=FALSE,maxShape=NA,minShape=NA,failureRegion=NA,colors=c(),threshold="otsu",classesToExclude=c(),numWindows=2,classifyStructures=FALSE,pixelClassifier=NA,ksToExclude=c(),densityToExclude=c(),numDensityWindows=4)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,6 +17,16 @@ calculateCellularity(filename = "", image = NA, classifier, cancerIdentifier, KS
  \item{maxShape}{Maximum size of cell nuclei}
   \item{minShape}{ Minimum size of cell nuclei }
   \item{failureRegion}{ minimum size of failure regions}
+  \item{colors}{Colors to paint the classes}
+  \item{threshold}{Which threshold should be uses, "otsu" or "phansalkar"}
+  \item{classesToExclude}{Should a class be excluded from cellularity calculation?}
+\item{numWindows}{Number of windows for the threshold.}
+\item{classifyStructures}{Use hierarchical classification. If yes a pixel classifier has to be defined. }
+\item{pixelClassifier}{A SVM to classify pixel based on their color values. Needed if hierarchical classification should be applied.}
+\item{ksToExclude}{These classes are excluded from kernel smoothing.}
+\item{densityToExclude}{This class is excluded from cellularity calculation.}
+\item{numDensityWindows}{Number of windows for the density plot.}
+
 }
 \details{
   The method calculates tumour cellularity of an image. The cells of the image are classified and the cellularity is: numTumourCells/numPixel.
@@ -32,15 +42,16 @@ calculateCellularity(filename = "", image = NA, classifier, cancerIdentifier, KS
 \examples{
 
 
-t = system.file("extdata", "trainingData.txt", package="CRImage")
+#t = system.file("extdata", "trainingData.txt", package="CRImage")
 #read training data
-trainingData=read.table(t,header=TRUE)
+#trainingData=read.table(t,header=TRUE)
 #create classifier
-classifier=createClassifier(trainingData,topo=FALSE)[[1]]
+#classifier=createClassifier(trainingData,topo=FALSE)[[1]]
 #calculation of cellularity
-f = system.file("extdata", "exImg.jpg", package="CRImage")
-exImg=readImage(f)
-cellularityValues=calculateCellularity(f,classifier=classifier,cancerIdentifier="1",maxShape=800,minShape=40,failureRegion=2000)
+#f = system.file("extdata", "exImg.jpg", package="CRImage")
+#exImg=readImage(f)
+#cellularity=calculateCellularity(classifier=classifier,filename=f,KS=TRUE,maxShape=800,minShape=40,failureRegion=2000,classifyStructures=FALSE,cancerIdentifier="1",numDensityWindows=2,colors=c("green","red"))
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

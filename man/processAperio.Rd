@@ -6,7 +6,7 @@
   Procession of Aperio TX Slides.
 }
 \usage{
-processAperio(classifier = classifier, inputFolder = inputFolder, outputFolder = outputFolder, identifier = identifier, numSlides = numSlides, cancerIdentifier = cancerIdentifier,maxShape=NA,minShape=NA,failureRegion=NA,slideToProcess=NA,KS=TRUE)
+processAperio(classifier=classifier,inputFolder=inputFolder,outputFolder=outputFolder,identifier=identifier,numSlides=numSlides,cancerIdentifier=cancerIdentifier,maxShape=800,minShape=40,failureRegion=2000,slideToProcess=NA,KS=TRUE,colors=c(),classesToExclude=c(),threshold="otsu",numWindows=2,classifyStructures=FALSE,ksToExclude=c(),pixelClassifier=NA,densityToExclude=c(),numDensityWindows=32,resizeFactor=4,plotCellTypeDensity=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +21,17 @@ processAperio(classifier = classifier, inputFolder = inputFolder, outputFolder =
   \item{failureRegion}{ minimum size of failure regions}
   \item{slideToProcess}{Set this parameter if only a certain slide should be processed}
 \item{KS}{Apply Kernel Smoother?}
+ \item{colors}{Colors to paint the classes}
+\item{classesToExclude}{Which class should be excluded?}
+\item{threshold}{Which thresholding method should be used, "otsu" or "phansalkar" possible}
+\item{numWindows}{Number of windows to use for thresholding.}
+\item{classifyStructures}{Use hierarchical classification. If yes a pixel classifier has to be defined. }
+\item{ksToExclude}{These classes are excluded from kernel smoothing.}
+\item{pixelClassifier}{A SVM to classify pixel based on their color values. Needed if hierarchical classification should be applied.}
+\item{densityToExclude}{This class is excluded from cellularity calculation.}
+\item{numDensityWindows}{Number of windows for the density plot.}
+\item{resizeFactor}{Specifies the size of the cell density image. If this variable is not defined, the size of the thumbnail is used for the cell density image, else the size is calculated by size(thumbnail)*resizeFactor. The thumbnail is the small overview image, created by the Aperio software.}
+\item{plotCellTypeDensity}{Plot the density of different cell types?}
 }
 \details{
   The function processes images of Aperio TX scanners. The images have to be saved in the CWS format. 
@@ -31,22 +42,23 @@ processAperio(classifier = classifier, inputFolder = inputFolder, outputFolder =
   \item{classifiedImage}{Subimages with labeled tumour and non tumour cells}
   \item{tumourDensity}{Cancer heatmaps for every subimage}
   \item{cellCoordinates}{Coordinates and cell class for every cell in the subimage}
+\item{resizeFactor}{Size of the cellularity density image, calculated by size(thumbnail) * resizeFactor. Whereas the thumbnail is the small overview image produced by Aperio.}
 }
 \author{ Henrik Failmezger, failmezger@cip.ifi.lmu.de }
 
 
 \examples{
-t = system.file("extdata", "trainingData.txt", package="CRImage")
+#t = system.file("extdata", "trainingData.txt", package="CRImage")
 #read training data
-trainingData=read.table(t,header=TRUE)
+#trainingData=read.table(t,header=TRUE)
 #create classifier
-classifier=createClassifier(trainingData,topo=FALSE)[[1]]
+#classifier=createClassifier(trainingData,topo=FALSE)[[1]]
 #classify aperio
-f = system.file("extdata",  package="CRImage")
-f=file.path(f,"8905")
-dir.create("AperiOutput")
+#f = system.file("extdata",  package="CRImage")
+#f=file.path(f,"8905")
+#dir.create("AperiOutput")
 #takes long time!
-#processAperio(classifier=classifier,inputFolder=f,outputFolder="AperiOutput",identifier="Da",numSlides=2,cancerIdentifier="1",maxShape=800,minShape=40,failureRegion=2000)
+
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

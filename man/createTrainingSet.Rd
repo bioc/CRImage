@@ -6,7 +6,7 @@
   Creates a training set for cell classification.
 }
 \usage{
-createTrainingSet(filename = "", image = NA,maxShape = NA,minShape = NA,failureRegion = NA)
+createTrainingSet(filename = "", image = NA,maxShape = NA,minShape = NA,failureRegion = NA, threshold = "otsu",numWindows=2)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -15,6 +15,8 @@ createTrainingSet(filename = "", image = NA,maxShape = NA,minShape = NA,failureR
   \item{maxShape}{Maximum size of cell nuclei}
   \item{minShape}{ Minimum size of cell nuclei }
   \item{failureRegion}{ minimum size of failure regions}
+\item{threshold}{Which threshodling method should be used, "otsu" or "phansalkar"}
+\item{numWindows}{Number of windows to use for thresholding.}
 }
 \details{
   The image is segmented. An image is created, in which every cell is labeled with a numberl. Furthermore, a table including the features of the cells is created.
