@@ -1,7 +1,7 @@
 Package: CRImage
 Type: Package
 Title: CRImage a package to classify cells and calculate tumour cellularity
-Version: 1.3.0
+Version: 1.0
 Date: 2010-05-03
 Author: Henrik Failmezger <failmezger@cip.ifi.lmu.de>, Yinyin Yuan <Yinyin.Yuan@cancer.org.uk>, Oscar Rueda <oscar.rueda@cancer.org.uk>,  Florian Markowetz <Florian.Markowetz@cancer.org.uk>
 Maintainer: Henrik Failmezger <failmezger@cip.ifi.lmu.de>, Yinyin Yuan <Yinyin.Yuan@cancer.org.uk>
@@ -9,6 +9,7 @@ Description: CRImage provides functionality to process and analyze images, in pa
 License: Artistic-2.0
 LazyLoad: yes
 Imports: MASS, e1071, foreach
-Depends: EBImage
-Collate: calculateThreshold.R localThreshold.R numberOfNeighbors.R segmentCytoplasma.R segmentImage.R createTrainingSet.R createClassifier.R kernelSmoother.R paintCells.R classifyCells.R determineCellularity.R calculateCellularity.R findSlices.R parseFinalScan.R classificationAperio.R processAperio.R
+Depends: EBImage, DNAcopy, aCGH
+Collate: plotCorrectedCN.R correctCopyNumber.R writeDensityImage.R convertRGBToHSV.R convertHSVToRGB.R imageCompression.R createBinaryImage.R colorCorrection.R searchStructures.R segmentStructures.R classifyStructures.R numberOfNeighbors.R segmentCytoplasma.R segmentImage.R createTrainingSet.R createClassifier.R kernelSmoother.R paintCells.R classifyCells.R determineCellularity.R calculateCellularity.R findSlices.R parseFinalScan.R classificationAperio.R processAperio.R  Phansalkar_threshold.R SauvolaThreshold.R calculateMeanStdTarget.R convertLABToRGB.R convertRGBToLAB.R localORThreshold.R localOtsuThreshold.R calculateOtsu.R
 biocViews: CellBiology, Classification
+Packaged: 2011-06-17 16:55:00 UTC; failmezger
