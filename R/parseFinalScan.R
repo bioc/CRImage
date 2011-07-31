@@ -2,7 +2,7 @@ parseFinalScan <-
 function(file){
 	d.temp=scan(file,what="character",sep="\n")
 	
-	positionMatrix=data.frame()
+	positionMatrix=data.frame(stringsAsFactors=FALSE)
 	level=FALSE
 	for(line in d.temp){
 		if(substr(line,1,12)=="tDescription"){

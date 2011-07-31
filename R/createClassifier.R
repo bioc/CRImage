@@ -10,14 +10,19 @@ function(trainingData,cross=FALSE,topo=TRUE){
 		g.x=NULL
 		g.y=NULL
 		g.edge=NULL
-		trainingData=subset(trainingData, select = -c(index,densityValues,sizeCytoplasma,classCell,g.x,g.y,g.edge))
+		m.x=NULL
+		m.y=NULL
+		trainingData=subset(trainingData, select = -c(index,densityValues,sizeCytoplasma,classCell,g.x,g.y,m.x,m.y,g.edge))
 	}else{
 	index=NULL
 	class=NULL
 	g.x=NULL
 	g.y=NULL
 	g.edge=NULL
-	trainingData=subset(trainingData, select = -c(index,classCell,g.x,g.y,g.edge))
+	m.x=NULL
+	m.y=NULL
+	sizeCytoplasma=NULL
+	trainingData=subset(trainingData, select = -c(densityValues,index,g.x,g.y,g.edge,m.x,m.y,sizeCytoplasma))
 	} 
 	model = svm(trainingData,as.character(classes),type='C',kernel='radial',probability=TRUE)
 	allCrossValues=c()

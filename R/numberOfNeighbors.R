@@ -8,7 +8,7 @@ function(img,cellCoordinates,allFeatures){
 	cellCoordinatesN=cbind(allFeatures[,"index"],cellCoordinates)
 	cellCoordinatesN=cbind(cellCoordinatesN,1:dim(cellCoordinates)[1])
 	#calculate the number of neighbors of every nuclei
-	indexNeighbors=data.frame()
+	indexNeighbors=data.frame(stringsAsFactors=FALSE)
 	for (i in 1:2){
 		xPos=xs
 		for (j in 1:2){
@@ -34,7 +34,7 @@ function(img,cellCoordinates,allFeatures){
 		}
 		yPos=yPos+ys
 	}
-	realIndex=data.frame(allFeatures[,"index"])
+	realIndex=data.frame(allFeatures[,"index"],stringsAsFactors=FALSE)
 	colnames(realIndex)="index"
 	colnames(indexNeighbors)=c("index","neighbors")
 	neighborsRealIndices=merge(realIndex,indexNeighbors,all.x=TRUE,all.y=TRUE)

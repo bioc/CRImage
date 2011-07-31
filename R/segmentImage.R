@@ -1,5 +1,5 @@
 segmentImage <-
-function(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA){
+function(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA,threshold="otsu",numWindows=2,classifyStructures=FALSE,pixelClassifier=NA){
 	if(filename!=""){
 		img = readImage(filename)
 	}else{
@@ -8,10 +8,19 @@ function(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA){
 	colorMode(img)="color"
 	if(length(dim(img))>2){
 		imgT=img[,,1]
-		indexWhitePixel=which(img[,,1]>0.85 & img[,,2]>0.85 & img[,,3]>0.85)
+		whitePixelMask=img[,,1]>0.85 & img[,,2]>0.85 & img[,,3]>0.85
+		indexWhitePixel=which(whitePixelMask==TRUE)
 	}else{
 		imgT=img
 		indexWhitePixel=which(img>0.85)
+	}
+	if(classifyStructures==TRUE){
+		if(is.na(pixelClassifier[1])){
+				message("A pixel classifier has to be defined. No structures are segmented.")
+		}else{
+				listStructures=segmentStructures(img,pixelClassifier)
+				imgSt=listStructures[[1]]
+		}
 	}
 	numWhitePixel=length(imgT[indexWhitePixel])
 	numPixel=length(as.vector(imgT))
@@ -19,7 +28,7 @@ function(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA){
 	message("Start segmentation.")
 	
 	#search large dark regions and color them white
-	imgG=channel(img,"grey")
+	imgG=EBImage::channel(img,"grey")
 	imgB=imgG
 	imgB[imgB<0.2]=1
 	imgB[imgB !=1]=0
@@ -32,16 +41,19 @@ function(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA){
 	imgSdN=imageData(imgS)+1
 	rm(imgS)
 	#set the failure region
+	failureMask=array(TRUE,dim(imgSdN))
 	if(!is.na(failureRegion)){
 		message("Delete failure regions.")
-		a=array(hc[imgSdN]<failureRegion,dim(imgSdN))
-		imgSdN[a]=-1
+		failureMask=array(hc[imgSdN]<failureRegion,dim(imgSdN))
+		imgSdN[failureMask]=TRUE
 	}
+	failures=which(failureMask==TRUE)
 	imgSdN=imgSdN-1
 	imgR=img[,,1]
 	imgGreen=img[,,2]
 	imgBlue=img[,,3]
 	failures=which(imgSdN==-1)
+	#failure regions
 	imgR[failures]=2
 	imgGreen[failures]=2
 	imgBlue[failures]=2
@@ -56,8 +68,9 @@ function(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA){
 	imgG[indexWhitePixel]=1
 	positivePixels=dim(img[,,1])[1]*dim(img[,,1])[2]-length(indexWhitePixel)-length(failures)
 		
-	#local thresholding
-	imgB=localThreshold(imgG,img)
+	#local thresholding, failures are considered as whitePixel
+	whitePixelMask[failureMask]=TRUE
+	imgB=createBinaryImage(imgG,img,method=threshold,numWindows=numWindows,whitePixelMask=whitePixelMask)
 	#morphological opening to smooth the shape
 	imgB=opening(imgB,makeBrush(5, shape='disc'))
 	imgS=bwlabel(imgB)
@@ -80,7 +93,7 @@ function(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA){
 		rm(imgT)
 		
 		if(!is.na(maxShape)){
-			message("Delete max cell nuclei.")
+			message("Resegment large regions.")
 			imgSd=as.vector(imageData(imgW)+1)
 			hc=tabulate(imgSd)
 			rm(imgSd)
@@ -104,7 +117,7 @@ function(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA){
 			sapply(allSegments,function(i){
 				   greyPixel=imgLS[imgSdN==i]
 				   indexGreyPixel=which(imgSdN==i)
-				   localThreshold=calculateThreshold(as.vector(greyPixel[greyPixel !=1]))
+				   localThreshold=calculateOtsu(as.vector(greyPixel[greyPixel !=1]))
 				   thresholdedPixel=greyPixel
 				   thresholdedPixel[thresholdedPixel<localThreshold]=-1
 				   thresholdedPixel[thresholdedPixel!=-1]=0
@@ -122,12 +135,38 @@ function(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA){
 			imgW_ls[imgW_ls==maxSegment]=0
 			message("Large segments resegmented.")
 			imgW=imgW+imgW_ls
+			#delete Border cells####################################
+			borderLeft=as.vector(unique(imgW[,1]))
+			borderRight=as.vector(unique(imgW[,dim(imgW)[2]]))
+			borderUp=as.vector(unique(imgW[1,]))
+			borderDown=as.vector(unique(imgW[dim(imgW)[1],]))
+			borderCells=c(borderLeft,borderRight,borderUp,borderDown)
+			cellsToMask=rep(0,max(imgW)+1)
+			cellsToMask[borderCells+1]=1
+			imgSdBorder=imageData(imgW)+1
+			a=array(cellsToMask[imgSdBorder]==1,dim(imgSdBorder))
+			imgSdBorder[a]=1
+			imgSdBorder=imgSdBorder-1
+			imgW=imgSdBorder
+			########################################################
+			
 			rm(imgB_ls)
 			imgSd=as.vector(imageData(imgW)+1)
 			hc=tabulate(imgSd)
 			imgSdN=imageData(imgW)+1
 			if(!is.na(minShape)){
 				a=array(hc[imgSdN]<minShape,dim(imgSdN))
+				imgSdN[a]=1
+			}
+			imgSdN=imgSdN-1
+			imgW=imgSdN
+			
+			
+			imgSd=as.vector(imageData(imgW)+1)
+			hc=tabulate(imgSd)
+			imgSdN=imageData(imgW)+1
+			if(!is.na(minShape)){
+				a=array(hc[imgSdN]>maxShape,dim(imgSdN))
 				imgSdN[a]=1
 			}
 			imgSdN=imgSdN-1
@@ -153,16 +192,20 @@ function(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA){
 				imgW=imgWv
 				rm(imgWv)
 				#calculate the features
+				#hard coded
+				colorCorrection=FALSE
+				if(colorCorrection==TRUE){
+					meanStdTarget=rbind(c(78.282154,300.371584) ,c(9.694320,-10.856946), c(2.081496,3.614328))
+					imgG=colorCorrection(img,meanStdTarget)
+				}
 				hG=hullFeatures(imgW)
 				hF=hullFeatures(imgW)
 				allM=moments(imgW,imgG)
 				zM=zernikeMoments(imgW,imgG)
 				hFgrey=haralickFeatures(imgW,imgG)
-				allFeatures=data.frame()
-				classCell=c()
-				classCell=rep(NA,dim(hF)[1])
+				allFeatures=data.frame(stringsAsFactors=FALSE)
 				
-				allFeatures=cbind(classCell,hF,allM,zM,hFgrey)
+				allFeatures=cbind(hF,allM,zM,hFgrey)
 				allFeatures=allFeatures[allFeatures[,"g.s"]>0,]
 				index=1:dim(allFeatures)[1]
 				allFeatures=cbind(index,allFeatures)
@@ -170,7 +213,7 @@ function(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA){
 				cellCoordinates=allFeatures[,c("g.x","g.y")]
 				cellCoordinates[,1]=as.numeric(format(cellCoordinates[,1],digits=4))
 				cellCoordinates[,2]=as.numeric(format(cellCoordinates[,2],digits=4))
-				write.table(allFeatures[,c("g.x","g.y")],"cellCoordinates.txt")
+				#write.table(allFeatures[,c("g.x","g.y")],"cellCoordinates.txt")
 				densityNeighbors=kde2d(cellCoordinates[,"g.x"],cellCoordinates[,"g.y"],n=100)
 				dV=densityNeighbors$z
 				dimnames(dV)=list(densityNeighbors$x,densityNeighbors$y)
@@ -179,25 +222,36 @@ function(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA){
 				
 				#segment the cytoplasma
 				sizeCytoplasma=segmentCytoplasma(img,imgW,indexWhitePixel,imgG,index,hF)
-				
 				#calculate the number of neighbors of every nuclei
 				numberNeighbors=numberOfNeighbors(img,cellCoordinates,allFeatures)
 				allFeatures=cbind(allFeatures,numberNeighbors)
 				allFeatures=cbind(allFeatures,sizeCytoplasma)
 				
 				allFeatures=allFeatures[allFeatures[,"g.s"]>0,]
-				message("Segmentation ended.")
-				l=list(img,imgW,allFeatures,indexWhitePixel,TRUE)
+				if(classifyStructures==TRUE){	
+					#look if nuclei are within structures
+					structures=searchStructures(img,imgW,imgSt,index,hF)
+					structures=unlist(structures)
+					structures=structures[allFeatures[,"g.s"]>0]
+					l=list(img,Image(imgW),allFeatures,indexWhitePixel,TRUE,listStructures,structures)
+				}else{
+					l=list(img,Image(imgW),allFeatures,indexWhitePixel,TRUE)
+				}
 				
+				message("Segmentation ended.")
+				
+				l
 			}else{
 				message("no cells")
-				allFeatures=data.frame()
-				l=list(img,img,allFeatures,indexWhitePixel,FALSE)
+				allFeatures=data.frame(stringsAsFactors=FALSE)
+				l=list(img,Image(img),allFeatures,indexWhitePixel,FALSE)
+				l
 		}
 		}else{
 		message("Almost white. No classicfication applied.")
-		allFeatures=data.frame()
-		l=list(img,img,allFeatures,indexWhitePixel,FALSE)
+		allFeatures=data.frame(stringsAsFactors=FALSE)
+		l=list(img,Image(img),allFeatures,indexWhitePixel,FALSE)
+		l
 	}
 	
 }

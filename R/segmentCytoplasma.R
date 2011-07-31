@@ -6,7 +6,7 @@ function(img,imgW,indexWhitePixel,imgG,index,hF){
 	imgGn[imgGn==1]=-1
 	imgGn[imgW>1]=-1
 	imgGn=imgGn[-indexWhitePixel]
-	t=calculateThreshold(as.vector(imgGn[imgGn !=-1]))
+	t=calculateOtsu(as.vector(imgGn[imgGn !=-1]))
 	imgBC=imgG
 	imgBC[img[,,1]<=t]=-1
 	imgBC[imgBC != -1]=0

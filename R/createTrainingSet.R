@@ -1,9 +1,9 @@
 createTrainingSet <-
-function(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA){
+function(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA,threshold="otsu",numWindows=2){
 	if(filename != ""){
-		imageData=try(segmentImage(filename=filename,maxShape=maxShape,minShape=minShape,failureRegion=failureRegion))
+		imageData=try(segmentImage(filename=filename,maxShape=maxShape,minShape=minShape,failureRegion=failureRegion,threshold=threshold,numWindows=numWindows))
 	}else{
-		imageData=try(segmentImage(image=image,maxShape=maxShape,minShape=minShape,failureRegion=failureRegion))
+		imageData=try(segmentImage(image=image,maxShape=maxShape,minShape=minShape,failureRegion=failureRegion,threshold=threshold,numWindows=numWindows))
 	}
 	featuresObjects=imageData[[3]]
 	image=imageData[[1]]

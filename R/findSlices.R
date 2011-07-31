@@ -1,11 +1,12 @@
 findSlices <-
 function(imgFolder,pathToOutputFolder,numSlides){
 	smallImage=readImage(file.path(imgFolder,"SlideThumb.jpg"))
+	#if not in color mode, convert to color mode
 	
 	#segment the thumbnail to find the sections in the image
 	pathToImgFolder=imgFolder
-	imgG=channel(smallImage,"gray")
-	globalThreshold=calculateThreshold(as.vector(imgG))
+	imgG=EBImage::channel(smallImage,"gray")
+	globalThreshold=calculateOtsu(as.vector(imgG))
 	imgG[imgG<globalThreshold]=-1
 	imgG[imgG !=-1]=0
 	imgG[imgG==-1]=1
@@ -20,10 +21,10 @@ function(imgFolder,pathToOutputFolder,numSlides){
 	}
 	
 	if(numSlides==1){
-		if(length(hF)==0){
+		if(is.null(dim((hF)))){
 			centers=matrix(c(1,1))
 		}else{
-		centers=matrix(c(mean(hF[,1])),c(1))
+			centers=matrix(c(mean(hF[,1])),c(1))
 		}
 	}else{
 		#cluster the segments to the number of sections
@@ -40,7 +41,7 @@ function(imgFolder,pathToOutputFolder,numSlides){
 			}
 		}
 	}
-	sliceColors=col2rgb(c("red","blue","green","yellow","orange","black","brown","purple4","darkolivegreen1","darkred","gray" ))
+	sliceColors=col2rgb(c("white","green","blue","red","green","yellow","orange","black","brown","purple4","darkolivegreen1","darkred","gray" ))
 	
 	
 	finalScanInFile=file.path(pathToImgFolder,"FinalScan.ini")
@@ -69,7 +70,7 @@ function(imgFolder,pathToOutputFolder,numSlides){
 	
 	
 	#assign the subimages to the sections
-	blockSlice=data.frame( 2:dim(blockPositions)[1], 2:dim(blockPositions)[1], 2:dim(blockPositions)[1], 2:dim(blockPositions)[1])
+	blockSlice=data.frame( 2:dim(blockPositions)[1], 2:dim(blockPositions)[1], 2:dim(blockPositions)[1], 2:dim(blockPositions)[1],2:dim(blockPositions)[1], 2:dim(blockPositions)[1],stringsAsFactors=FALSE)
 	for(i in 2:dim(blockPositions)[1]){
 		name=as.character(blockPositions[i,1])
 		x=as.numeric(as.character(blockPositions[i,2]))
@@ -92,10 +93,11 @@ function(imgFolder,pathToOutputFolder,numSlides){
 				dMin=d
 			}
 		}
-		blockSlice[(i-1),]=c(name,slice,posBlockXSmall,posBlockYSmall)
+		
+		blockSlice[(i-1),]=c(name,slice,posBlockXSmall,posBlockYSmall,x,y)
 	}
 	colnames(blockSlice)=c("block","slice")
 	sizeO=c(widthO,heightO)
-	l=list(blockSlice,sizeO)
+	l=list(blockSlice,sizeO,smallImage)
 }
 
