@@ -22,7 +22,7 @@
 \bigskip
 Henrik Failmezger$^{\ast}$, Yinyin Yuan, Oscar Rueda, Florian Markowetz \\
 \bigskip
-$\ast$ E-mail: henrik.failmezger@cip.ifi.lmu.de
+$\ast$ E-mail: failmezger@cip.ifi.lmu.de
 \end{center}
 \end{flushleft}
 \tableofcontents
@@ -58,10 +58,9 @@ colorMode(imgRGB)='color'
 In order to correct for staining deviations the color space of one image can be adapted to the color space of a target image. The target image is converted to the LAB color space and the mean and standard deviation of every channel is calculated.
 Afterwards the image is standardized to the mean and standard deviation of the target image.
 \begin{figure}
-\centerline{\includegraphics[width=0.5\textwidth]{exImg2}
-\includegraphics[width=0.4\textwidth]{exImg3}
-\includegraphics[width=0.4\textwidth]{imgCorrected}
-{segmentedImage}}
+\centerline{\includegraphics[width=0.3\textwidth]{exImg2}
+\includegraphics[width=0.3\textwidth]{exImg3}
+\includegraphics[width=0.3\textwidth]{imgCorrected}}
 \caption{Color correction. The color values of the image in the middle are adapted to the color values of the left image.}
 \label{fig2}
 \end{figure}

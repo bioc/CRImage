@@ -9,7 +9,7 @@ Description: CRImage provides functionality to process and analyze images, in pa
 License: Artistic-2.0
 LazyLoad: yes
 Imports: MASS, e1071, foreach
-Depends: EBImage, DNAcopy, aCGH
+Depends: EBImage (<= 3.4.0), DNAcopy, aCGH
 Collate: plotCorrectedCN.R correctCopyNumber.R writeDensityImage.R convertRGBToHSV.R convertHSVToRGB.R imageCompression.R createBinaryImage.R colorCorrection.R searchStructures.R segmentStructures.R classifyStructures.R numberOfNeighbors.R segmentCytoplasma.R segmentImage.R createTrainingSet.R createClassifier.R kernelSmoother.R paintCells.R classifyCells.R determineCellularity.R calculateCellularity.R findSlices.R parseFinalScan.R classificationAperio.R processAperio.R  Phansalkar_threshold.R SauvolaThreshold.R calculateMeanStdTarget.R convertLABToRGB.R convertRGBToLAB.R localORThreshold.R localOtsuThreshold.R calculateOtsu.R
 biocViews: CellBiology, Classification
 Packaged: 2011-06-17 16:55:00 UTC; failmezger
