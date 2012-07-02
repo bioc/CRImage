@@ -17,4 +17,3 @@ function(CN, chr=NULL) {
 		 main="BAF Corrected Data", col="blue")
 	title(paste(CN$seg$ID[1], "Chrom", chr), outer=2)
 }
-

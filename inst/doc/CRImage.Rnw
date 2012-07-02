@@ -91,7 +91,7 @@ The image is read with \Rfunction{readImage}. \Rfunction{whitePixelMask} is TRUE
 An image can be segmented to find cells in the image, using the function \Rfunction{segmentImage}.
 <<results=hide>>=
 f = system.file("extdata", "exImg2.jpg", package="CRImage")
-segmentationValues=segmentImage(filename=f,maxShape=800,minShape=40,failureRegion=2000,threshold="otsu",numWindows=4,) 
+segmentationValues=segmentImage(filename=f,maxShape=800,minShape=40,failureRegion=2000,threshold="otsu",window=4) 
 @
 The image is converted to grayscale and thresholded. Morphological opening is used to delete clutter and to smooth the shapes of the cells. The watershed algorithm is used to separate clustered cells. 
 The parameter \Rfunction{maxShape} defines the maximal shape of cell nuclei. Segmented nuclei which exceed this value will be thresholded and segmented again.

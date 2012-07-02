@@ -1,6 +1,6 @@
 convertRGBToHSV <-
 function(img){
-	img=imageData(img)
+	imgHSV=imageData(img)
 	imgR=as.vector(img[,,1])
 	imgG=as.vector(img[,,2])
 	imgB=as.vector(img[,,3])
@@ -16,7 +16,7 @@ function(img){
 	
 	
 	k=which(imgR==v)
-	#h[k]=60*((imgR[k]-imgB[k])/s[k])
+#h[k]=60*((imgR[k]-imgB[k])/s[k])
 	h[k]=60*((imgG[k]-imgB[k])/s[k])
 	
 	k=which(imgG==v)
@@ -37,9 +37,8 @@ function(img){
 	s[k]=0
 	
 	s=s/Max_rgb
-	img[,,1]=h
-	img[,,2]=s
-	img[,,3]=v
-	img
+	imgHSV[,,1]=h
+	imgHSV[,,2]=s
+	imgHSV[,,3]=v
+	imgHSV
 }
-

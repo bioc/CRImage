@@ -1,7 +1,7 @@
 correctCopyNumber <-
 function(arr="Sample1", chr=NULL, p=NULL, z=NULL, min.value=-5) {
 	require(DNAcopy)
-require(aCGH)
+	require(aCGH)
 	
 # Modification of mergeLevels, in aCGH package to fix a bug in ansari.test
 	MymergeLevels <- 
@@ -51,7 +51,7 @@ require(aCGH)
 							 (1:(n - 1))[order(abs(d))])
 				for (i in 1:nrow(dst)) {
 					cont = 1
-					#Henrik#
+#Henrik#
 					out = aCGH:::combine.func(diff = dst[i, 1], vecObs,
 											  vecPredNow, mnNow, mn1 = mnNow[dst[i, 2]],
 											  mn2 = mnNow[dst[i, 3]], pv.thres = pv.thres,
@@ -61,8 +61,8 @@ require(aCGH)
 											  else {
 											  thresAbs
 											  })
-					####
-					#out = aCGH:::combine.func(diff = dst[i, 1], vecObs,
+####
+#out = aCGH:::combine.func(diff = dst[i, 1], vecObs,
 #						  vecPredNow, mnNow, mn1 = mnNow[dst[i, 2]],
 #											  mn2 = mnNow[dst[i, 3]], pv.thres = pv.thres,
 #											  thresAbs = if (scale) {
@@ -146,9 +146,9 @@ require(aCGH)
 		if (is.null(exact)) 
         exact <- ((m < 50) && (n < 50))
 		if (exact && !TIES) {
-			#modified by Henrik
+#modified by Henrik
 			R_pansari=NULL
-			#	
+#	
 			pansari <- function(q, m, n) {
 				.C(R_pansari, as.integer(length(q)), p = as.double(q), 
 				   as.integer(m), as.integer(n))$p
@@ -161,9 +161,9 @@ require(aCGH)
 						   }, less = 1 - pansari(STATISTIC - 1, m, n), greater = pansari(STATISTIC, 
 																						 m, n))
 			if (conf.int) {
-				#modified by Henrik
+#modified by Henrik
 				R_qansari=NULL
-				#
+#
 				qansari <- function(p, m, n) {
 					.C(R_qansari, as.integer(length(p)), q = as.double(p), 
 					   as.integer(m), as.integer(n))$q
@@ -425,4 +425,3 @@ require(aCGH)
 	res <- list(x=data.frame(Chrom=sub.z[,2], Pos=sub.z[,3], Orig.LRR=sub.z[,4], Orig.BAF=sub.z[,5], Corr.LRR=sub.z[,4] + rep(DNA$LRR.tum - DNA$seg.mean, DNA$num.mark), Corr.BAF=new.BAF), seg=DNA)
 	res
 }
-

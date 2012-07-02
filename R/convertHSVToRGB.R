@@ -59,4 +59,3 @@ function(imgHSV){
 	imgHSV[,,3]=array(b,dim(imgHSV[,,1]))
 	imgHSV
 }
-

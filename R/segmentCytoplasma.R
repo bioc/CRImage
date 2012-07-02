@@ -13,27 +13,32 @@ function(img,imgW,indexWhitePixel,imgG,index,hF){
 	imgBC[imgBC == -1]=1
 	imgBCo=opening(imgBC,makeBrush(5, shape='disc'))
 	imgBCs=bwlabel(imgBCo)
-	imgBCsD=imageData(imgBCs)
-	colorMode(img)="color"	
-	"imgCyto=paintObjects(imgBCs,img,col=\"yellow\")"
-	featuresCytoplasma=hullFeatures(imageData(imgBCs))[,"g.s"]
-	imgBCs=imageData(imgBCs)
-	f=function(index,imgWt,imgBCsDt){
-		
-		x=round(as.vector(hF[index,"g.x"]))
-		y=round(as.vector(hF[index,"g.y"]))
-		if(x>0 & y>0){
-			segCyto=imgBCs[x,y]
-			if(segCyto >0){
-				s=featuresCytoplasma[segCyto]
+	regions=unique(as.vector(imgBCs))
+	if(length(regions)>0){
+		imgBCsD=imageData(imgBCs)
+		colorMode(img)="color"	
+		"imgCyto=paintObjects(imgBCs,img,col=\"yellow\")"
+		featuresCytoplasma=hullFeatures(imageData(imgBCs))[,"g.s"]
+		imgBCs=imageData(imgBCs)
+		f=function(index,imgWt,imgBCsDt){
+			
+			x=round(as.vector(hF[index,"g.x"]))
+			y=round(as.vector(hF[index,"g.y"]))
+			if(x>0 & y>0){
+				segCyto=imgBCs[x,y]
+				if(segCyto >0){
+					s=featuresCytoplasma[segCyto]
+				}else{
+					0
+				}
 			}else{
 				0
 			}
-		}else{
-			0
 		}
+		sizeCytoplasma=sapply(index,f, imgWt=imgW,imgBCsD=as.vector(imgBCsD),simplify=TRUE)
+	}else{
+		message("No cytoplasma found")
+		sizeCytoplasma=rep(0,length(index))
 	}
-	sizeCytoplasma=sapply(index,f, imgWt=imgW,imgBCsD=as.vector(imgBCsD),simplify=TRUE)
 	sizeCytoplasma
 }
-

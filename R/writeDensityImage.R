@@ -53,7 +53,7 @@ function(pathToOutputFolderImgDir,cellsDensityImage,sizeO,blockSlice,name,nameFi
 		
 		xPosition=ceiling(posBlockX*(dim(smallDensityImage)[1]/sizeO[1]))
 		yPosition=ceiling(posBlockY*(dim(smallDensityImage)[2]/sizeO[2]))
-
+		
 		if((xPosition-sizeX)<=0){
 			sizeX=sizeX-1
 			smallCellsDensityImage=smallCellsDensityImage[2:dim(smallCellsDensityImage)[1],,]
@@ -65,7 +65,7 @@ function(pathToOutputFolderImgDir,cellsDensityImage,sizeO,blockSlice,name,nameFi
 		if((yPosition-sizeY)<=0){
 #			counterUp=1
 #			while((yPosition-sizeY)<=0){
-				sizeY=sizeY-1
+			sizeY=sizeY-1
 #				counterUp=counterUp+1
 #}
 			
@@ -76,7 +76,7 @@ function(pathToOutputFolderImgDir,cellsDensityImage,sizeO,blockSlice,name,nameFi
 			smallCellsDensityImage=smallCellsDensityImage[,1:(dim(smallCellsDensityImage)[2]-1),]
 		}
 		
-
+		
 		imgN=smallDensityImage[(xPosition-sizeX):(xPosition+sizeXRight),(yPosition-sizeY):(yPosition+sizeYDown),]
 		
 		smallDensityImage[(xPosition-sizeX):(xPosition+sizeXRight),(yPosition-sizeY):(yPosition+sizeYDown),]=smallCellsDensityImage
@@ -84,4 +84,3 @@ function(pathToOutputFolderImgDir,cellsDensityImage,sizeO,blockSlice,name,nameFi
 		writeImage(smallDensityImage,file.path(pathToOutputFolderImgDir,name))
 	}
 }
-

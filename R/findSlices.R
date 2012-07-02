@@ -1,11 +1,11 @@
 findSlices <-
-function(imgFolder,pathToOutputFolder,numSlides){
+function(imgFolder,pathToOutputFolder,numSlides,fontSize=10){
 	smallImage=readImage(file.path(imgFolder,"SlideThumb.jpg"))
-	#if not in color mode, convert to color mode
+#if not in color mode, convert to color mode
 	
-	#segment the thumbnail to find the sections in the image
+#segment the thumbnail to find the sections in the image
 	pathToImgFolder=imgFolder
-	imgG=EBImage::channel(smallImage,"gray")
+	imgG=channel(smallImage,"gray")
 	globalThreshold=calculateOtsu(as.vector(imgG))
 	imgG[imgG<globalThreshold]=-1
 	imgG[imgG !=-1]=0
@@ -15,7 +15,7 @@ function(imgFolder,pathToOutputFolder,numSlides){
 	imgG=opening(imgG,makeBrush(10,shape="diamond"))
 	imgS=bwlabel(imgG)
 	hF=hullFeatures(imgS)[,c("g.x","g.y")]
-	#if the image is found two times (should not happen)
+#if the image is found two times (should not happen)
 	if(length(numSlides)>1){
 		numSlides=numSlides[1]
 	}
@@ -27,7 +27,7 @@ function(imgFolder,pathToOutputFolder,numSlides){
 			centers=matrix(c(mean(hF[,1])),c(1))
 		}
 	}else{
-		#cluster the segments to the number of sections
+#cluster the segments to the number of sections
 		if(nrow(hF)>numSlides){
 			"centers=kmeans(hF[,1],as.numeric(numSlides),iter.max=2000)$centers"
 			centersIndex=cutree(hclust(dist(hF[,1])),k=as.numeric(numSlides))
@@ -53,24 +53,26 @@ function(imgFolder,pathToOutputFolder,numSlides){
 	centerOY=heightO/2
 	widthSmallI=dim(smallImage)[1]
 	heightSmallI=dim(smallImage)[2]
-	#draw the centers of the different clusters in the thumbnail
+#draw the centers of the different clusters in the thumbnail
 	for(i in 1:as.numeric(numSlides)){
 		centerXSmall=centers[i,1]
 		centerYSmall=round(heightSmallI/2)
 		if(centerXSmall-10 >0 & centerXSmall+10<dim(smallImage)[1] & centerYSmall-10 >0 & centerYSmall+10<dim(smallImage)[2]){
-		smallImage[(centerXSmall-10):(centerXSmall+10),(centerYSmall-10):(centerYSmall+10),1]=sliceColors[1,i]/255
-		smallImage[(centerXSmall-10):(centerXSmall+10),(centerYSmall-10):(centerYSmall+10),2]=sliceColors[2,i]/255
-		smallImage[(centerXSmall-10):(centerXSmall+10),(centerYSmall-10):(centerYSmall+10),3]=sliceColors[3,i]/255
+			smallImage[(centerXSmall-10):(centerXSmall+10),(centerYSmall-10):(centerYSmall+10),1]=sliceColors[1,i]/255
+			smallImage[(centerXSmall-10):(centerXSmall+10),(centerYSmall-10):(centerYSmall+10),2]=sliceColors[2,i]/255
+			smallImage[(centerXSmall-10):(centerXSmall+10),(centerYSmall-10):(centerYSmall+10),3]=sliceColors[3,i]/255
 		}
 	}
 	
 	centers=centers[sort.list(centers),]
-
-	writeImage(smallImage,file.path(pathToOutputFolder,"smallImage.jpg"))
 	
 	
-	#assign the subimages to the sections
+	
+	
+#assign the subimages to the sections
 	blockSlice=data.frame( 2:dim(blockPositions)[1], 2:dim(blockPositions)[1], 2:dim(blockPositions)[1], 2:dim(blockPositions)[1],2:dim(blockPositions)[1], 2:dim(blockPositions)[1],stringsAsFactors=FALSE)
+	
+	
 	for(i in 2:dim(blockPositions)[1]){
 		name=as.character(blockPositions[i,1])
 		x=as.numeric(as.character(blockPositions[i,2]))
@@ -96,8 +98,13 @@ function(imgFolder,pathToOutputFolder,numSlides){
 		
 		blockSlice[(i-1),]=c(name,slice,posBlockXSmall,posBlockYSmall,x,y)
 	}
+#label the positions of the subimages ## not working for mac, so check for system first!!
+	if(length(grep("mac",.Platform$pkgType))==0){
+	    font=drawfont(weight=600,size=fontSize)
+		smallImage=drawtext(smallImage,cbind(as.numeric(blockSlice[,3]),as.numeric(blockSlice[,4])),blockSlice[,1],font=font,col="black")
+	}
+	writeImage(smallImage,file.path(pathToOutputFolder,"smallImage.jpg"))
 	colnames(blockSlice)=c("block","slice")
 	sizeO=c(widthO,heightO)
 	l=list(blockSlice,sizeO,smallImage)
 }
-

@@ -1,8 +1,8 @@
 localOtsuThreshold <-
-function(imgG,numWindows,excludeWhite=FALSE, whitePixelMask){
-
+function(imgG,window,excludeWhite=FALSE){
+	
 	imgB=imgG
-	numWindows=numWindows
+	numWindows=window
 	xWs=round(dim(imgG)[1]/numWindows)
 	yWs=round(dim(imgG)[2]/numWindows)
 	xlw=1
@@ -15,42 +15,34 @@ function(imgG,numWindows,excludeWhite=FALSE, whitePixelMask){
 		for(jW in 1:numWindows){
 			if(xrw>dim(imgG)[1]){xrw=dim(imgG)[1]}
 			imgGL=imgG[xlw:xrw,yow:yuw]
-			# shall white pixel be excluded from thresholding
 			if(excludeWhite){
-				whiteMaskGL=whitePixelMask[xlw:xrw,yow:yuw]
-			}
-			if(excludeWhite){
-				if(length(as.vector(imgGL[whiteMaskGL == TRUE]))>0){
-							globalThreshold=calculateOtsu(as.vector(imgGL[whiteMaskGL == TRUE]))
+				if(length(as.vector(imgGL[imgGL != -1]))>0){
+					globalThreshold=calculateOtsu(as.vector(imgGL[imgGL != -1]))
 				}else{
-							globalThreshold=NA
+					globalThreshold=1.0
 				}
 			}else{
 				if(length(as.vector(imgGL))>0){
-							globalThreshold=calculateOtsu(as.vector(imgGL))
+					globalThreshold=calculateOtsu(as.vector(imgGL))
 				}else{
-							globalThreshold=NA
+					globalThreshold=1.0
 				}
 			}
 			
-			if(is.nan(globalThreshold)){
-				imgB[xlw:xrw,yow:yuw]=0
-			}else{
-				imgBL=array(0,dim(imgGL))
-				#find foreground
-				foreground=which(imgGL<globalThreshold)
-				#set foreground to one
-				imgBL[foreground]=1
-				#set white pixel or failures to background
-				imgBL[imgGL== -1]=0
-				
-				imgB[xlw:xrw,yow:yuw]=imgBL
-				rm(imgBL)
-				rm(imgGL)
-			}
-				xlw=xrw+1
-				xrw=xrw+xWs
 			
+			imgBL=array(0,dim(imgGL))
+#find foreground
+			foreground=which(imgGL<globalThreshold)
+#set foreground to one
+			imgBL[foreground]=1
+#set white pixel or failures to background
+			imgBL[imgGL== -1]=0
+			
+			imgB[xlw:xrw,yow:yuw]=imgBL
+			rm(imgBL)
+			rm(imgGL)
+			xlw=xrw+1
+			xrw=xrw+xWs
 			
 		}
 		yow=yuw+1
@@ -59,4 +51,3 @@ function(imgG,numWindows,excludeWhite=FALSE, whitePixelMask){
 	}
 	imgB
 }
-

@@ -27,11 +27,9 @@ function(imgWT,img,classes,index,classValues,colors=c()){
 			imgOld = paintObjects(imgTC,imgOld,col=cols[counter])
 			counter=counter+1
 		}
-	
 		imgOld
 	}else{
 		message("Too many classes to paint. Do not use more than 10 classes.")
 		img
 	}
 }
-

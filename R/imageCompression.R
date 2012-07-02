@@ -1,8 +1,8 @@
 imageCompression <-
 function(img,k){
-	s1=svd(img[,,1],k,k)
-	s2=svd(img[,,2],k,k)
-	s3=svd(img[,,3],k,k)
+	s1=svd(img[,,1])
+	s2=svd(img[,,2])
+	s3=svd(img[,,3])
 	
 	d1 <- diag(s1$d)
 	d2 <- diag(s2$d)
@@ -33,4 +33,3 @@ function(img,k){
 	img[,,3]=C3
 	img
 }
-

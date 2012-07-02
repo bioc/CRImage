@@ -6,7 +6,7 @@
  The function segments cells or cell nuclei in the image.
 }
 \usage{
-segmentImage(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA,threshold="otsu",numWindows=2,classifyStructures=FALSE,pixelClassifier=NA)
+segmentImage(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA,threshold="otsu",window=2, colorCorrection=FALSE, classifyStructures=FALSE,pixelClassifier=NA,greyscaleImage=0,penClassifier=NULL,referenceHist=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,9 +16,13 @@ segmentImage(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA,thres
   \item{minShape}{ Minimum size of cell nuclei }
   \item{failureRegion}{ minimum size of failure regions}
   \item{threshold}{Thresholding method, "otsu" or "phansalkar"}
-\item{numWindows}{Number of windows to use for thresholding.}
+\item{window}{Number of windows to use for thresholding.}
+\item{colorCorrection}{deprecated}
 \item{classifyStructures}{Segment structures in the image, if yes a pixel classifier has to be defined}
 \item{pixelClassifier}{A SVM which classifies RGB color values in foreground and background.}
+\item{greyscaleImage}{Channel of the RGB image, to use for thresholding, if 0 use a joined greyscale image.}
+\item{penClassifier}{Classifier to exclude low quality images(will be part of next release)}
+\item{referenceHist}{Color histogram of a reference image, that can be used to estimate the quality of the recent image (will be part of next release)}
 }
 \details{
 The image is converted to greyscale and thresholded.

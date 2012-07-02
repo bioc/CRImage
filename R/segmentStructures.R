@@ -5,12 +5,10 @@ function(img,pixelClassifier){
 	f = makeBrush(5, shape='disc', step=FALSE)
 	f = f/sum(f)
 	img=resize(img,250,250)
-	######TODELETE#####
+######TODELETE#####
 	imgT=img
-	whitePixelMask=imgT[,,1]>0.85 & imgT[,,2]>0.85 & imgT[,,3]>0.85
-	#No color correction until now
-	#imgCor=colorCorrection(imgT,meanStdTarget,whitePixelMask)
-	#img=imgCor
+	imgCor=colorCorrectionOld(img,meanStdTarget)
+	img=imgCor[[1]]
 	imgC=img
 	imgG=filter2(imgC, f)
 	colorValues=cbind(as.vector(imgG[,,1]),as.vector(imgG[,,2]),as.vector(imgG[,,3]))
@@ -19,23 +17,22 @@ function(img,pixelClassifier){
 	imgS=bwlabel(imgB)
 	numSeq=tabulate(imageData(imgS)+1)
 	imgSdN=imageData(imgS)+1
-	#set the failure region
+#set the failure region
 	a=array(numSeq[imgSdN]<80,dim(imgSdN))
 	imgSdN[a]=1
 	imgSdN=imgSdN-1
 	imgS=imgSdN
-	imgP=paintObjects(imgS,imgT,col=c("green"))
+	imgP=paintObjects(imgS,imgT,col=c("lightgreen"))
 #	allStructures=unique(imgS)
 #	for (s in allStructures){
-		#meanS=mean(hueValue[which(imgS==s)])
+#meanS=mean(hueValue[which(imgS==s)])
 #		print(meanS)
 #if(meanS>=290){
 #			imgS[imgS==s]=0
 #		}else{
 #			meanStructures=c(meanStructures,meanS)
-
+	
 #		}
 #}
-	l=list(imgS)
+	l=list(imgS,imgB,imgG,imgP,imgC,imgT)
 }
-

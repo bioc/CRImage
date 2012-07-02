@@ -7,4 +7,3 @@ function(allGreyValues){
 	t=m*(1+k*((s/R)-1))
 	t
 }
-

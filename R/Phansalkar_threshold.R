@@ -9,4 +9,3 @@ function(allGreyValues){
 	t=m*(1+p*exp(-q*m)+k*((s/R)-1))
 	t
 }
-

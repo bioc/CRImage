@@ -1,5 +1,5 @@
 kernelSmoother <-
-function(predictedClasses,cellCoordinates,segmentedImage,cancerIdentifier,indexCells,classesToExclude=c(),classValues,ksToExclude=c()){
+function(predictedClasses,cellCoordinates,segmentedImage,cancerIdentifier,indexCells,classesToExclude=c(),classValues,classOther,ksToExclude=c()){
 	message("Kernel Smoother")
 	prob=attr(predictedClasses, "prob")
 #convert all class values to character
@@ -34,7 +34,7 @@ function(predictedClasses,cellCoordinates,segmentedImage,cancerIdentifier,indexC
 #	indicesToExclude=1:length(predictedClasses)
 #	indicesToExclude=setdiff(indicesToExclude,indicesToProcess)
 #these cells will get their old class after smoothing
-
+	
 	
 	
 	probClasses=prob
@@ -124,17 +124,17 @@ function(predictedClasses,cellCoordinates,segmentedImage,cancerIdentifier,indexC
 	}
 	indicesToReplace=c()
 	if(length(ksToExclude)>0){
-		#indicesToExclude=c()
+#indicesToExclude=c()
 		indicesToKeep=c()
 		for (classE in ksToExclude){
 			indicesToReplace=c(indicesToReplace,which(classesRealIndices$oldClass==classE))
 		}
 	}
 	classesRealIndices$classValue[indicesToReplace]=classesRealIndices$oldClass[indicesToReplace]
-	#print(classesRealIndices$oldClass[nonProbKS])
+#print(classesRealIndices$oldClass[nonProbKS])
 	classesRealIndices$classValue[nonProbKS]=classesRealIndices$oldClass[nonProbKS]
 	nanIndices=which(is.na(classesRealIndices$classValue))
-	#if a class was not in the window of the Kernel Smoother, replace its label by the old class
+#if a class was not in the window of the Kernel Smoother, replace its label by the old class
 	classesRealIndices$classValue[nanIndices]=classesRealIndices$oldClass[nanIndices]
 #indName=which(names(classesRealIndices)=="classesRealIndices$classValues")
 #	names(classesRealIndices)[indName]="mergedClass"
@@ -151,4 +151,3 @@ function(predictedClasses,cellCoordinates,segmentedImage,cancerIdentifier,indexC
 	classSVM=classesRealIndices[,c(1,3)]
 	classSVM
 }
-

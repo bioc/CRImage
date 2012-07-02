@@ -6,7 +6,7 @@
   Procession of Aperio TX Slides.
 }
 \usage{
-processAperio(classifier=classifier,inputFolder=inputFolder,outputFolder=outputFolder,identifier=identifier,numSlides=numSlides,cancerIdentifier=cancerIdentifier,maxShape=800,minShape=40,failureRegion=2000,slideToProcess=NA,KS=TRUE,colors=c(),classesToExclude=c(),threshold="otsu",numWindows=2,classifyStructures=FALSE,ksToExclude=c(),pixelClassifier=NA,densityToExclude=c(),numDensityWindows=32,resizeFactor=4,plotCellTypeDensity=TRUE)
+processAperio(classifier=classifier,inputFolder=inputFolder,outputFolder=outputFolder,identifier=identifier,numSlides=numSlides,cancerIdentifier=cancerIdentifier,classOther = NA,maxShape=800,minShape=40,failureRegion=2000,slideToProcess=NA,KS=TRUE,colors=c(),classesToExclude=c(),threshold="otsu",window=2,colorCorrection=FALSE,classifyStructures=FALSE,ksToExclude=c(),pixelClassifier=NA,densityToExclude=c(),numDensityWindows=32,resizeFactor=4,plotCellTypeDensity=TRUE,greyscaleImage=0,penClassifier=NULL,referenceHist=NULL,fontSize = 10)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,6 +16,7 @@ processAperio(classifier=classifier,inputFolder=inputFolder,outputFolder=outputF
   \item{identifier}{ The identifier of the files ("Ss" or "Da") }
   \item{numSlides}{ The number of sections in the image. }
   \item{cancerIdentifier}{ The identifier of the cancer class}
+\item{classOther}{deprecated}
 \item{maxShape}{Maximum size of cell nuclei}
   \item{minShape}{ Minimum size of cell nuclei }
   \item{failureRegion}{ minimum size of failure regions}
@@ -24,7 +25,8 @@ processAperio(classifier=classifier,inputFolder=inputFolder,outputFolder=outputF
  \item{colors}{Colors to paint the classes}
 \item{classesToExclude}{Which class should be excluded?}
 \item{threshold}{Which thresholding method should be used, "otsu" or "phansalkar" possible}
-\item{numWindows}{Number of windows to use for thresholding.}
+\item{window}{Number of windows to use for thresholding.}
+\item{colorCorrection}{deprecated}
 \item{classifyStructures}{Use hierarchical classification. If yes a pixel classifier has to be defined. }
 \item{ksToExclude}{These classes are excluded from kernel smoothing.}
 \item{pixelClassifier}{A SVM to classify pixel based on their color values. Needed if hierarchical classification should be applied.}
@@ -32,6 +34,10 @@ processAperio(classifier=classifier,inputFolder=inputFolder,outputFolder=outputF
 \item{numDensityWindows}{Number of windows for the density plot.}
 \item{resizeFactor}{Specifies the size of the cell density image. If this variable is not defined, the size of the thumbnail is used for the cell density image, else the size is calculated by size(thumbnail)*resizeFactor. The thumbnail is the small overview image, created by the Aperio software.}
 \item{plotCellTypeDensity}{Plot the density of different cell types?}
+\item{greyscaleImage}{Color channel of the RGB image that should be used for thresholding}
+\item{penClassifier}{Classifier to exclude low quality images (will be part of next release)}
+\item{referenceHist}{Colour Histogram of a reference image that can be used to calculate the quality of the recent image. (will be part of next release)}
+\item{fontSize}{will be part of next release}
 }
 \details{
   The function processes images of Aperio TX scanners. The images have to be saved in the CWS format. 
@@ -59,6 +65,17 @@ processAperio(classifier=classifier,inputFolder=inputFolder,outputFolder=outputF
 #dir.create("AperiOutput")
 #takes long time!
 
+f = system.file("extdata",  package="CRImage")
+fc=file.path(f,"classifier_GU_Da33_0.8")
+load(fc)
+classifier=model
+fp=file.path(f,"pixelClassifier")
+load(fp)
+pixelClassifier=model
+pathToImage=file.path(f,"8905")
+pathToOutput="/Users/henrikfailmezger/Documents/PHD/SideProjects/Cambridge/package/output/"
+
+processAperio(classifier=classifier,inputFolder=pathToImage,outputFolder=pathToOutput,identifier="Da",numSlides=1,cancerIdentifier="c",maxShape=800,minShape=40,failureRegion=2000,slideToProcess=1,KS=FALSE,colors=c("white","green","blue","brown"),classesToExclude=c('a','l','nl'),threshold="otsu",ksToExclude=c('l','nl'),pixelClassifier=pixelClassifier,classifyStructures=TRUE,densityToExclude=c('a'),numDensityWindows=8,resizeFactor=1.5,plotCellTypeDensity=FALSE,greyscaleImage=1)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

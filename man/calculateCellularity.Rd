@@ -42,15 +42,15 @@ calculateCellularity(filename="",image=NA,classifier=NULL,cancerIdentifier=NA,KS
 \examples{
 
 
-#t = system.file("extdata", "trainingData.txt", package="CRImage")
+t = system.file("extdata", "trainingData.txt", package="CRImage")
 #read training data
-#trainingData=read.table(t,header=TRUE)
+trainingData=read.table(t,header=TRUE)
 #create classifier
-#classifier=createClassifier(trainingData,topo=FALSE)[[1]]
+classifier=createClassifier(trainingData,topo=FALSE)[[1]]
 #calculation of cellularity
-#f = system.file("extdata", "exImg.jpg", package="CRImage")
-#exImg=readImage(f)
-#cellularity=calculateCellularity(classifier=classifier,filename=f,KS=TRUE,maxShape=800,minShape=40,failureRegion=2000,classifyStructures=FALSE,cancerIdentifier="1",numDensityWindows=2,colors=c("green","red"))
+f = system.file("extdata", "exImg.jpg", package="CRImage")
+exImg=readImage(f)
+cellularity=calculateCellularity(classifier=classifier,filename=f,KS=TRUE,maxShape=800,minShape=40,failureRegion=2000,classifyStructures=FALSE,cancerIdentifier="1",numDensityWindows=2,colors=c("green","red"))
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
