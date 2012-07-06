@@ -54,28 +54,23 @@ processAperio(classifier=classifier,inputFolder=inputFolder,outputFolder=outputF
 
 
 \examples{
-#t = system.file("extdata", "trainingData.txt", package="CRImage")
-#read training data
-#trainingData=read.table(t,header=TRUE)
-#create classifier
-#classifier=createClassifier(trainingData,topo=FALSE)[[1]]
-#classify aperio
-#f = system.file("extdata",  package="CRImage")
-#f=file.path(f,"8905")
-#dir.create("AperiOutput")
-#takes long time!
+
 
 f = system.file("extdata",  package="CRImage")
+#load an existing classifier
 fc=file.path(f,"classifier_GU_Da33_0.8")
 load(fc)
 classifier=model
+#load an existing pixel classifier
 fp=file.path(f,"pixelClassifier")
 load(fp)
 pixelClassifier=model
+#path to the input image
 pathToImage=file.path(f,"8905")
-pathToOutput="/Users/henrikfailmezger/Documents/PHD/SideProjects/Cambridge/package/output/"
-
-processAperio(classifier=classifier,inputFolder=pathToImage,outputFolder=pathToOutput,identifier="Da",numSlides=1,cancerIdentifier="c",maxShape=800,minShape=40,failureRegion=2000,slideToProcess=1,KS=FALSE,colors=c("white","green","blue","brown"),classesToExclude=c('a','l','nl'),threshold="otsu",ksToExclude=c('l','nl'),pixelClassifier=pixelClassifier,classifyStructures=TRUE,densityToExclude=c('a'),numDensityWindows=8,resizeFactor=1.5,plotCellTypeDensity=FALSE,greyscaleImage=1)
+#specify an output path here
+pathToOutput="" 
+#RUN after specification of an ouput folder
+#processAperio(classifier=classifier,inputFolder=pathToImage,outputFolder=pathToOutput,identifier="Da",numSlides=1,cancerIdentifier="c",maxShape=800,minShape=40,failureRegion=2000,slideToProcess=1,KS=FALSE,colors=c("white","green","blue","brown"),classesToExclude=c('a','l','nl'),threshold="otsu",ksToExclude=c('l','nl'),pixelClassifier=pixelClassifier,classifyStructures=TRUE,densityToExclude=c('a'),numDensityWindows=8,resizeFactor=1.5,plotCellTypeDensity=FALSE,greyscaleImage=1)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
