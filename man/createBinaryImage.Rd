@@ -6,7 +6,7 @@
 Creates a binary image from a grayscale image by thresholding.
 }
 \usage{
-createBinaryImage(imgG,img=NULL,method="otsu",threshold=NA,numWindows=1,whitePixelMask=c())
+createBinaryImage(imgG,img=NULL,method="otsu",threshold=NULL,numWindows=1,whitePixelMask=c())
 }
 \arguments{
   \item{img}{An Image object or an array.}

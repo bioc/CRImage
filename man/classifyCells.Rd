@@ -6,7 +6,7 @@
   The function classifies cells and paints the different class types in the image.
 }
 \usage{
-classifyCells(classifier,filename="",image=NA,segmentedImage=NA,featuresObjects=NA,paint=TRUE,KS=FALSE,cancerIdentifier=NA,classOther = NA, maxShape=NA,minShape=NA,failureRegion=NA,colors=c(),classesToExclude=c(),threshold="otsu",window=2,structures=NA,classifyStructures=FALSE,pixelClassifier=NA,ksToExclude=c())
+classifyCells(classifier,filename="",image=NA,segmentedImage=NA,featuresObjects=NA,paint=TRUE,KS=FALSE,cancerIdentifier=NA, maxShape=NA,minShape=NA,failureRegion=NA,colors=c(),classesToExclude=c(),threshold="otsu",numWindows=2,structures=NA,classifyStructures=FALSE,pixelClassifier=NA,ksToExclude=c())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,14 +18,13 @@ classifyCells(classifier,filename="",image=NA,segmentedImage=NA,featuresObjects=
   \item{paint}{ If true, the classified cells are painted with different colors in the image}
   \item{KS}{ Use Kernel Smoohter in classification? }
   \item{cancerIdentifier}{A string which describes, how the cancer class is named. }
-  \item{classOther}{deprecated}
   \item{maxShape}{Maximum size of cell nuclei}
   \item{minShape}{ Minimum size of cell nuclei }
   \item{failureRegion}{ minimum size of failure regions}
   \item{colors}{Colors to paint the classes}
   \item{classesToExclude}{Which class should be excluded?}
   \item{threshold}{Which thresholding method should be used, "otsu" or "phansalkar"}
-\item{window}{Number of windows to use for thresholding.}
+\item{numWindows}{Number of windows to use for thresholding.}
 \item{structures}{If the image is already segmented, structures can be inserted to enable hierarchical classification.}
 \item{classifyStructures}{Use hierarchical classification. If yes a pixel classifier has to be defined. }
 \item{pixelClassifier}{A SVM to classify pixel based on their color values. Needed if hierarchical classification should be applied.}
@@ -42,14 +41,14 @@ Different classes are labeled with different colors in the image.
   \item{comp2 }{Classes, painted in the image, if paint was true}
 }
 
-\author{Henrik Failmezger, failmezger@lmb.uni-muenchen.de}
+\author{Henrik Failmezger, failmezger@mpipz.mpg.de}
 
 \examples{
 t = system.file("extdata", "trainingData.txt", package="CRImage")
 #read training data
 trainingData=read.table(t,header=TRUE)
 #create classifier
-classifier=createClassifier(trainingData,topo=FALSE)[[1]]
+classifier=createClassifier(trainingData)[[1]]
 #classify cells
 f = system.file("extdata", "exImg.jpg", package="CRImage")
 classesValues=classifyCells(classifier,filename=f,KS=TRUE,maxShape=800,minShape=40,failureRegion=2000)

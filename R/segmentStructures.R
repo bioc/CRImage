@@ -7,8 +7,8 @@ function(img,pixelClassifier){
 	img=resize(img,250,250)
 ######TODELETE#####
 	imgT=img
-	imgCor=colorCorrectionOld(img,meanStdTarget)
-	img=imgCor[[1]]
+	imgCor=colorCorrection(img,meanStdTarget)
+	img=imgCor
 	imgC=img
 	imgG=filter2(imgC, f)
 	colorValues=cbind(as.vector(imgG[,,1]),as.vector(imgG[,,2]),as.vector(imgG[,,3]))
@@ -22,6 +22,8 @@ function(img,pixelClassifier){
 	imgSdN[a]=1
 	imgSdN=imgSdN-1
 	imgS=imgSdN
+	imgS[imgS>0]=1
+	imgS=bwlabel(imgS)
 	imgP=paintObjects(imgS,imgT,col=c("lightgreen"))
 #	allStructures=unique(imgS)
 #	for (s in allStructures){

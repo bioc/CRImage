@@ -1,13 +1,15 @@
 classificationAperio <-
-function(fileLocation,filename,pathToOutputFolderImgDir,classifier,pathToOutputFolderImgDirFiles,pathToOutputFolderImgDirImages,blockSlice,sliceColors,sizeO,index,cancerIdentifier,maxShape=800,minShape=40,failureRegion=2000,KS=TRUE,colors=c(),classesToExclude=c(),threshold="otsu",window=2,classOther=NA,pathToOutputFolderImgDirStructures,colorCorrection=colorCorrection,classifyStructures=FALSE,pathToOutputFolderImgDirCells,ksToExclude=ksToExclude,pixelClassifier=pixelClassifier,densityToExclude=densityToExclude,numDensityWindows=32,plotCellTypeDensity=TRUE,greyscaleImage=greyscaleImage,penClassifier=NULL,referenceHist=NULL){
+function(fileLocation,filename,pathToOutputFolderImgDir,classifier,pathToOutputFolderImgDirFiles,pathToOutputFolderImgDirImages,blockSlice,sliceColors,sizeO,index,cancerIdentifier,maxShape=800,minShape=40,failureRegion=2000,KS=TRUE,colors=c(),classesToExclude=c(),threshold="otsu",numWindows=2,classOther=NA,pathToOutputFolderImgDirStructures,colorCorrection=colorCorrection,classifyStructures=FALSE,pathToOutputFolderImgDirCells,ksToExclude=ksToExclude,pixelClassifier=pixelClassifier,densityToExclude=densityToExclude,numDensityWindows=32,plotCellTypeDensity=TRUE,greyscaleImage=greyscaleImage,penClassifier=NULL,referenceHist=NULL){
 	widthO=as.numeric(as.character(sizeO[1]))
 	heightO=as.numeric(as.character(sizeO[2]))
 	pathToFile=file.path(fileLocation,filename)
 #name of the image
 	nameFile=strsplit(filename,"\\.")[[1]][1]
 	message(paste("Start: ", nameFile))
+
 # segmentation of the image
-	imageData=try(segmentImage(filename=pathToFile,maxShape=maxShape,minShape=minShape,failureRegion=NA,threshold=threshold,window=window,colorCorrection=FALSE,classifyStructures=classifyStructures,pixelClassifier=pixelClassifier,greyscaleImage=greyscaleImage,penClassifier=penClassifier,referenceHist=referenceHist))
+	imageData=try(segmentImage(filename=pathToFile,maxShape=maxShape,minShape=minShape,failureRegion=NA,threshold=threshold,numWindows=numWindows,colorCorrection=FALSE,classifyStructures=classifyStructures,pixelClassifier=pixelClassifier,greyscaleImage=greyscaleImage,penClassifier=penClassifier,referenceHist=referenceHist))
+
 #original image
 	img=imageData$image
 #segmented image
@@ -18,8 +20,7 @@ function(fileLocation,filename,pathToOutputFolderImgDir,classifier,pathToOutputF
 	indexWhitePixel=imageData$indexWhitePixel
 #classify the nuclei, or is the image white?
 	classify=imageData$classify
-	
-	
+
 #is the image a failure image(no classification)
 #section of the image
 	slice=blockSlice[as.character(blockSlice$block)==nameFile,2]
@@ -40,9 +41,9 @@ function(fileLocation,filename,pathToOutputFolderImgDir,classifier,pathToOutputF
 			structures=NA
 		}
 #classify the cells
-		classValues=classifyCells(classifier,image=img,segmentedImage=imgW,featuresObjects=cellData,paint=TRUE,KS=KS,cancerIdentifier=cancerIdentifier,classOther=classOther,colors=colors,classesToExclude=classesToExclude,structures=structures,classifyStructures=classifyStructures,ksToExclude=ksToExclude)
+		classValues=classifyCells(classifier,image=img,segmentedImage=imgW,featuresObjects=cellData,paint=TRUE,KS=KS,cancerIdentifier=cancerIdentifier,colors=colors,classesToExclude=classesToExclude,structures=structures,classifyStructures=classifyStructures,ksToExclude=ksToExclude)
 		classes=classValues[[1]]
-		print("write image")
+		
 		writeImage(classValues[[2]],file.path(pathToOutputFolderImgDir,file.path(paste("section",slice,sep="_"),filename)))
 		if(classifyStructures==TRUE){
 			writeImage(classValues[[3]],file.path(pathToOutputFolderImgDirStructures,paste(nameFile,"_img5.jpg",sep="")))
@@ -56,7 +57,6 @@ function(fileLocation,filename,pathToOutputFolderImgDir,classifier,pathToOutputF
 #writeImage(paintedCellsFinal,file.path(pathToOutputFolderImgDir,file.path(paste("section",slice,sep="_"),paste(nameFile,"_Final.jpg"))))
 		
 #calculation of cellularity, drawing of the heatmap
-		message("Calculate cellulartiy.")
 		cellValues=determineCellularity(cellData[,"classCell"],cellData,dim(imgW),img,imgW,indexWhitePixel,cancerIdentifier,classifier$levels,densityToExclude=densityToExclude,numDensityWindows=numDensityWindows,plotCellTypeDensity=plotCellTypeDensity)
 		cellsSubImages=cellValues[[1]]
 		cellsDensityImage=cellValues[[2]]
@@ -66,7 +66,7 @@ function(fileLocation,filename,pathToOutputFolderImgDir,classifier,pathToOutputF
 		write.table(cellValueTable,file.path(pathToOutputFolderImgDirFiles,file.path(paste("section",slice,sep="_"),nameFile)),sep="\t",row.names = FALSE)
 		cellDataProbs=data.frame(cellData,classProbs,stringsAsFactors=FALSE)	
 		write.table(cellDataProbs,file.path(pathToOutputFolderImgDirCells,paste(nameFile,".txt",sep="")),sep="\t",row.names=FALSE,quote = FALSE)
-######### READ WRITE qualityTable #############
+		######### READ WRITE qualityTable #############
 		qualityTable=c(nameFile,NA,NA)
 		qualityTableNames=c("Image","pen","distToRef")
 		if(!is.null(penClassifier)){
@@ -76,7 +76,7 @@ function(fileLocation,filename,pathToOutputFolderImgDir,classifier,pathToOutputF
 			qualityTable[3]=imageData$distToRef
 		}
 		existingQualityTable=read.table(file.path(pathToOutputFolderImgDir,"subimageQuality.txt"),header=TRUE)
-#check if any subimage was written in quality table yet
+		#check if any subimage was written in quality table yet
 		if(colnames(existingQualityTable)[1] != "Image"){
 			qualityTable=t(qualityTable)
 			colnames(qualityTable)=t(qualityTableNames)

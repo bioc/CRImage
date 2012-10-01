@@ -1,5 +1,5 @@
 createBinaryImage <-
-function(imgG,img=NULL,method="otsu",threshold=NA,numWindows=1,whitePixelMask=c()){
+function(imgG,img=NULL,method="otsu",threshold=NULL,numWindows=1,whitePixelMask=c()){
 	message("thresholding")
 	dimensions=dim(imgG)
 #exclude white pixels from threshold
@@ -8,28 +8,27 @@ function(imgG,img=NULL,method="otsu",threshold=NA,numWindows=1,whitePixelMask=c(
 		message("Exclude white pixel")
 		excludeWhite=TRUE
 	}
-	if(is.na(threshold)){
+	if(is.null(threshold)){
 		imgG=array(imgG,dimensions)
-		if(method=="otsu"){
-			t=localOtsuThresholdNew(imgG,numWindows,excludeWhite,whitePixelMask)
+		if(method!="phansalkar"){
+			t=localThreshold(imgG=imgG,numWindows=numWindows,excludeWhite=excludeWhite,whitePixelMask=whitePixelMask,method=method)
 		}else if(method=="phansalkar"){
 			if(is.null(img)){
 				stop("Color image not defined.")
 			}else{
-				t=localORThresholdNew(imgG,img,numWindows,excludeWhite)
+				t=localORThreshold(imgG=imgG,img=img,numWindows=numWindows,excludeWhite=excludeWhite,whitePixelMask=whitePixelMask)
 			}
 		}else{
 			message("Thresholding method not known; Otsu thresholding is applied.")
-			t=localOtsuThresholdNew(imgG,img,numWindows,excludeWhite)
+			t=localThreshold(imgG=imgG,numWindows=numWindows,excludeWhite=excludeWhite,whitePixelMask=whitePixelMask,method="otsu")
 		}
 	}else{
 		message("use fixed threshold")
 		t=array(0,dim(imgG))
-#find foreground
+		#find foreground
 		foreground=which(imgG<threshold)
-#set foreground to one
+		#set foreground to one
 		t[foreground]=1
-		
 	}
 	t
 	

@@ -42,7 +42,7 @@ Tumour cellularity
 }
 }
 \author{
-Henrik Failmezger, <failmezger@cip.ifi.lmu.de>
+Henrik Failmezger, <failmezger@mpipz.mpg.de>
 
 Yinyin Yuan, <Yinyin.Yuan@cancer.org.uk>
 

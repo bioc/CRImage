@@ -5,10 +5,11 @@ function(img, segmentedImage,classes,classColours,nblocks=3,labeledPoints=NULL,f
 	oldY=NULL
 	#
 	options(stringsAsFactors = FALSE)
-	f=hullFeatures(segmentedImage)
+	f=computeFeatures.moment(segmentedImage)
+	print(f)
 	activateHull=FALSE
 	convHull=c()
-	xyCell=f[,c("g.x","g.y")]
+	xyCell=f[,c("m.cx","m.cy")]
 	blockPosition=data.frame(stringsAsFactors=FALSE)
 	xs=floor(dim(img)[1]/nblocks)
 	ys=floor(dim(img)[2]/nblocks)
@@ -29,7 +30,7 @@ function(img, segmentedImage,classes,classColours,nblocks=3,labeledPoints=NULL,f
 	actClass=classes[classCounter]
 	remove=FALSE
 	action="add"
-	description=c("Key: A=add point, D=delete point, C=switch class, Q=Exit, R=refresh, W=Write image to file ")
+	description=c("Key: A=add point, D=delete point, H=Hull, C=switch class, Q=Exit, R=refresh, W=Write image to file ")
 	actValues=paste("Class:",actClass,"Action:",action)
 	actBlock=1;
 	
@@ -340,7 +341,6 @@ function(img, segmentedImage,classes,classColours,nblocks=3,labeledPoints=NULL,f
 	}
 	dragmouseup <- function(buttons, x, y) {
 		if(activateHull){
-		print(convHull)
 		if(!is.null(dim(convHull)[1])){
 			actPosition=blockPosition[blockPosition$block==actBlock,]
 			
@@ -375,10 +375,6 @@ function(img, segmentedImage,classes,classColours,nblocks=3,labeledPoints=NULL,f
 			}
 			
 			######
-			print(newPoints)
-			print("labeledPoints")
-			print(labeledPoints)
-			print(actBlock)
 			colnames(newPoints)=c("index","x","y","classCell","xLocal","yLocal","block")
 			#print(newPoints)
 			#print(labeledPoints)

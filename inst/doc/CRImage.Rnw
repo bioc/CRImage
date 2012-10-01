@@ -22,7 +22,7 @@
 \bigskip
 Henrik Failmezger$^{\ast}$, Yinyin Yuan, Oscar Rueda, Florian Markowetz \\
 \bigskip
-$\ast$ E-mail: failmezger@cip.ifi.lmu.de
+$\ast$ E-mail: failmezger@mpipz.mpg.de
 \end{center}
 \end{flushleft}
 \tableofcontents
@@ -91,7 +91,7 @@ The image is read with \Rfunction{readImage}. \Rfunction{whitePixelMask} is TRUE
 An image can be segmented to find cells in the image, using the function \Rfunction{segmentImage}.
 <<results=hide>>=
 f = system.file("extdata", "exImg2.jpg", package="CRImage")
-segmentationValues=segmentImage(filename=f,maxShape=800,minShape=40,failureRegion=2000,threshold="otsu",window=4) 
+segmentationValues=segmentImage(filename=f,maxShape=800,minShape=40,failureRegion=2000,threshold="otsu",numWindows=4) 
 @
 The image is converted to grayscale and thresholded. Morphological opening is used to delete clutter and to smooth the shapes of the cells. The watershed algorithm is used to separate clustered cells. 
 The parameter \Rfunction{maxShape} defines the maximal shape of cell nuclei. Segmented nuclei which exceed this value will be thresholded and segmented again.
@@ -148,7 +148,7 @@ f = system.file("extdata", "trainingData.txt", package="CRImage")
 #read training data
 trainingData=read.table(f,header=TRUE)
 #create classifier
-classifierValues=createClassifier(trainingData,topo=FALSE)
+classifierValues=createClassifier(trainingData)
 classifier=classifierValues[[1]]
 #classifiedCells=classifierValues[[2]]
 #display(classifiedCells)
@@ -168,7 +168,7 @@ t = system.file("extdata", "trainingData.txt", package="CRImage")
 #read training data
 trainingData=read.table(t,header=TRUE)
 #create classifier
-classifier=createClassifier(trainingData,topo=FALSE)[[1]]
+classifier=createClassifier(trainingData)[[1]]
 #calculation of cellularity
 f = system.file("extdata", "exImg2.jpg", package="CRImage")
 cellularity=calculateCellularity(classifier=classifier,filename=f,KS=TRUE,maxShape=800,minShape=40,failureRegion=2000,classifyStructures=FALSE,cancerIdentifier="1",numDensityWindows=2,colors=c("green","red"))
@@ -186,7 +186,7 @@ Large pathological images are often difficult to process due to their often larg
 #create the classifier
 t = system.file("extdata", "trainingData.txt", package="CRImage")
 trainingData=read.table(t,header=TRUE)
-classifier=createClassifier(trainingData,topo=FALSE)[[1]]
+classifier=createClassifier(trainingData)[[1]]
 @
 <<eval=FALSE>>=
 dir.create("AperiOutput")

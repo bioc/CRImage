@@ -25,4 +25,3 @@ function(imgT){
 	rm(LAB)
 	imgT
 }
-

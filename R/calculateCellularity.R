@@ -5,9 +5,9 @@ function(filename="",image=NA,classifier=NULL,cancerIdentifier=NA,KS=FALSE,maxSh
 		stop("Specify a classifier. No cellularity calculation applied")
 	}
 	if(filename !=""){
-		imageData=try(segmentImage(filename=filename,image=NA,maxShape=maxShape,minShape=minShape,failureRegion=failureRegion,threshold=threshold,window=numWindows,classifyStructures=classifyStructures,pixelClassifier=pixelClassifier))
+		imageData=try(segmentImage(filename=filename,image=NA,maxShape=maxShape,minShape=minShape,failureRegion=failureRegion,threshold=threshold,numWindows=numWindows,classifyStructures=classifyStructures,pixelClassifier=pixelClassifier))
 	}else{
-		imageData=try(segmentImage(filename="",image=image,maxShape=maxShape,minShape=minShape,failureRegion=failureRegion,threshold=threshold,window=numWindows,classifyStructures=classifyStructures,pixelClassifier=pixelClassifier))
+		imageData=try(segmentImage(filename="",image=image,maxShape=maxShape,minShape=minShape,failureRegion=failureRegion,threshold=threshold,numWindows=numWindows,classifyStructures=classifyStructures,pixelClassifier=pixelClassifier))
 	}
 	img=imageData[[1]]
 	imgW=imageData[[2]]

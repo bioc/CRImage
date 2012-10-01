@@ -37,7 +37,7 @@ calculateCellularity(filename="",image=NA,classifier=NULL,cancerIdentifier=NA,KS
   \item{cellularity values }{a vector, the n first values indicate the n numbers of cells in the n classes, the n + 1th value indicates the tumour cellularity, The n + 2th value is the ratio of tumour cells by all cells}
   \item{cancerHeatmap }{Heatmap of cancer density}
 }
-\author{ Henrik Failmezger, failmezger@cip.ifi.lmu.de }
+\author{ Henrik Failmezger, failmezger@mpipz.mpg.de}
 
 \examples{
 
@@ -46,11 +46,11 @@ t = system.file("extdata", "trainingData.txt", package="CRImage")
 #read training data
 trainingData=read.table(t,header=TRUE)
 #create classifier
-classifier=createClassifier(trainingData,topo=FALSE)[[1]]
+classifier=createClassifier(trainingData)[[1]]
 #calculation of cellularity
 f = system.file("extdata", "exImg.jpg", package="CRImage")
 exImg=readImage(f)
-cellularity=calculateCellularity(classifier=classifier,filename=f,KS=TRUE,maxShape=800,minShape=40,failureRegion=2000,classifyStructures=FALSE,cancerIdentifier="1",numDensityWindows=2,colors=c("green","red"))
+cellularity=calculateCellularity(classifier=classifier,filename=f,KS=TRUE,maxShape=800,minShape=40,failureRegion=2000,classifyStructures=FALSE,cancerIdentifier="c",numDensityWindows=2,colors=c("green","red"))
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

@@ -29,7 +29,7 @@ function(imgO,meanStdTarget,whiteMask=c()){
 	rm(imgR)
 	rm(imgB)
 	rm(imgG)
-
+	
 #convert in the LAB color space
 	labO=convertRGBToLAB(imgO)
 #calculate mean and standard deviation for the differen channels
@@ -77,4 +77,3 @@ function(imgO,meanStdTarget,whiteMask=c()){
 	imgO[,,3]=imgB
 	imgO
 }
-

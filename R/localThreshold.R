@@ -1,6 +1,5 @@
-localOtsuThresholdNew <-
-function(imgG,numWindows,excludeWhite=FALSE, whitePixelMask){
-
+localThreshold <-
+function(imgG,numWindows,excludeWhite=FALSE, whitePixelMask,method="otsu"){
 	imgB=imgG
 	numWindows=numWindows
 	xWs=round(dim(imgG)[1]/numWindows)
@@ -18,18 +17,28 @@ function(imgG,numWindows,excludeWhite=FALSE, whitePixelMask){
 			# shall white pixel be excluded from thresholding
 			if(excludeWhite){
 				whiteMaskGL=whitePixelMask[xlw:xrw,yow:yuw]
+			}else{
+				whiteMaskGL=array(FALSE,dim(imgGL))
 			}
 			if(excludeWhite){
-				if(length(as.vector(imgGL[whiteMaskGL == TRUE]))>0){
-							globalThreshold=calculateOtsu(as.vector(imgGL[whiteMaskGL == TRUE]))
+				if(length(as.vector(imgGL[whiteMaskGL == FALSE]))>0){
+					if(method=="otsu"){
+						globalThreshold=calculateOtsu(as.vector(imgGL[whiteMaskGL == FALSE]))
+					}else if(method=="oregon"){
+						globalThreshold=oregonThreshold(as.vector(imgGL[whiteMaskGL == FALSE]))
+					}
 				}else{
-							globalThreshold=NA
+					globalThreshold=NA
 				}
 			}else{
 				if(length(as.vector(imgGL))>0){
-							globalThreshold=calculateOtsu(as.vector(imgGL))
+					if(method=="otsu"){
+						globalThreshold=calculateOtsu(as.vector(imgGL[whiteMaskGL == FALSE]))
+					}else if(method=="oregon"){
+						globalThreshold=oregonThreshold(as.vector(imgGL[whiteMaskGL == FALSE]))
+					}
 				}else{
-							globalThreshold=NA
+					globalThreshold=NA
 				}
 			}
 			
@@ -48,8 +57,8 @@ function(imgG,numWindows,excludeWhite=FALSE, whitePixelMask){
 				rm(imgBL)
 				rm(imgGL)
 			}
-				xlw=xrw+1
-				xrw=xrw+xWs
+			xlw=xrw+1
+			xrw=xrw+xWs
 			
 			
 		}
@@ -59,4 +68,3 @@ function(imgG,numWindows,excludeWhite=FALSE, whitePixelMask){
 	}
 	imgB
 }
-

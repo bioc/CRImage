@@ -15,8 +15,8 @@ function(classes,classifiedCells,dimImg,img,imgW,indexWhitePixel,cancerIdentifie
 	imgTC[a]=0
 	imgTC[imgTC==length(predictedClassesN)]=0
 	
-	classifiedCells[,"g.x"]=as.numeric(as.character(classifiedCells[,"g.x"]))
-	classifiedCells[,"g.y"]=as.numeric(as.character(classifiedCells[,"g.y"]))
+	classifiedCells[,"m.cx"]=as.numeric(as.character(classifiedCells[,"m.cx"]))
+	classifiedCells[,"m.cy"]=as.numeric(as.character(classifiedCells[,"m.cy"]))
 	numWindows=numDensityWindows
 	xStepSize=dimImg[1]/numWindows
 	yStepSize=dimImg[2]/numWindows
@@ -84,7 +84,7 @@ function(classes,classifiedCells,dimImg,img,imgW,indexWhitePixel,cancerIdentifie
 			cancerCells=c()
 			otherCellsWindow=c()
 			for (classValue in classValues){
-				cells=subset(classifiedCells,classifiedCells[,"g.x"]<=xr & classifiedCells[,"g.x"]>=xl & classifiedCells[,"g.y"]<=yu & classifiedCells[,"g.y"]>=yo & classes==classValue)
+				cells=subset(classifiedCells,classifiedCells[,"m.cx"]<=xr & classifiedCells[,"m.cx"]>=xl & classifiedCells[,"m.cy"]<=yu & classifiedCells[,"m.cy"]>=yo & classes==classValue)
 				excludeThisClass=FALSE
 				for(classE in densityToExclude){
 					if (classE == classValue){
@@ -94,12 +94,12 @@ function(classes,classifiedCells,dimImg,img,imgW,indexWhitePixel,cancerIdentifie
 				if (excludeThisClass==FALSE){
 					otherCellsWindow=c(otherCellsWindow,dim(cells)[1])
 				}
-				
 				if(classValue == cancerIdentifier){
 					cancerCells=cells
 				}
 				
 			}
+			
 			if(length(cancerCells)==0){
 				ratioCancerCellPixel=0
 			}else{
@@ -143,8 +143,7 @@ function(classes,classifiedCells,dimImg,img,imgW,indexWhitePixel,cancerIdentifie
 				wholeCellDensityImage[xl:xr,yo:yu,1]=rColors[colorRatioCancerCellPixel]
 				wholeCellDensityImage[xl:xr,yo:yu,2]=gColors[colorRatioCancerCellPixel]
 				wholeCellDensityImage[xl:xr,yo:yu,3]=bColors[colorRatioCancerCellPixel]
-				
-				if(plotCellTypeDensity==TRUE && length(cellRatios)>=3){
+				if(plotCellTypeDensity==TRUE & length(cellRatios)>=3){
 					if(cellRatios[1]==0 && cellRatios[2]==0 && cellRatios[3]==0){
 						cellRatios[1]=1
 						cellRatios[2]=1

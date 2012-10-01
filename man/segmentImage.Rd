@@ -6,7 +6,7 @@
  The function segments cells or cell nuclei in the image.
 }
 \usage{
-segmentImage(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA,threshold="otsu",window=2, colorCorrection=FALSE, classifyStructures=FALSE,pixelClassifier=NA,greyscaleImage=0,penClassifier=NULL,referenceHist=NULL)
+segmentImage(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA,threshold="otsu",numWindows=2, colorCorrection=FALSE, classifyStructures=FALSE,pixelClassifier=NULL,greyscaleImage=0,penClassifier=NULL,referenceHist=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,7 +16,7 @@ segmentImage(filename="",image=NA,maxShape=NA,minShape=NA,failureRegion=NA,thres
   \item{minShape}{ Minimum size of cell nuclei }
   \item{failureRegion}{ minimum size of failure regions}
   \item{threshold}{Thresholding method, "otsu" or "phansalkar"}
-\item{window}{Number of windows to use for thresholding.}
+\item{numWindows}{Number of windows to use for thresholding.}
 \item{colorCorrection}{deprecated}
 \item{classifyStructures}{Segment structures in the image, if yes a pixel classifier has to be defined}
 \item{pixelClassifier}{A SVM which classifies RGB color values in foreground and background.}

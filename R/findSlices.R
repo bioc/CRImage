@@ -2,7 +2,6 @@ findSlices <-
 function(imgFolder,pathToOutputFolder,numSlides,fontSize=10){
 	smallImage=readImage(file.path(imgFolder,"SlideThumb.jpg"))
 #if not in color mode, convert to color mode
-	
 #segment the thumbnail to find the sections in the image
 	pathToImgFolder=imgFolder
 	imgG=channel(smallImage,"gray")
@@ -14,12 +13,12 @@ function(imgFolder,pathToOutputFolder,numSlides,fontSize=10){
 	imgG=closing(imgG,makeBrush(10,shape="diamond"))
 	imgG=opening(imgG,makeBrush(10,shape="diamond"))
 	imgS=bwlabel(imgG)
-	hF=hullFeatures(imgS)[,c("g.x","g.y")]
+
+	hF=computeFeatures.moment(imgS)[,c("m.cx","m.cy")]
 #if the image is found two times (should not happen)
 	if(length(numSlides)>1){
 		numSlides=numSlides[1]
 	}
-	
 	if(numSlides==1){
 		if(is.null(dim((hF)))){
 			centers=matrix(c(1,1))
@@ -42,7 +41,6 @@ function(imgFolder,pathToOutputFolder,numSlides,fontSize=10){
 		}
 	}
 	sliceColors=col2rgb(c("white","green","blue","red","green","yellow","orange","black","brown","purple4","darkolivegreen1","darkred","gray" ))
-	
 	
 	finalScanInFile=file.path(pathToImgFolder,"FinalScan.ini")
 	
@@ -68,11 +66,10 @@ function(imgFolder,pathToOutputFolder,numSlides,fontSize=10){
 	
 	
 	
-	
 #assign the subimages to the sections
 	blockSlice=data.frame( 2:dim(blockPositions)[1], 2:dim(blockPositions)[1], 2:dim(blockPositions)[1], 2:dim(blockPositions)[1],2:dim(blockPositions)[1], 2:dim(blockPositions)[1],stringsAsFactors=FALSE)
 	
-	
+
 	for(i in 2:dim(blockPositions)[1]){
 		name=as.character(blockPositions[i,1])
 		x=as.numeric(as.character(blockPositions[i,2]))

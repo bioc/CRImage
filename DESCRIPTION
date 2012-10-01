@@ -2,10 +2,10 @@ Package: CRImage
 Type: Package
 Title: CRImage a package to classify cells and calculate tumour
         cellularity
-Version: 1.4.1
-Date: 2010-05-03
-Author: Henrik Failmezger <failmezger@cip.ifi.lmu.de>, Yinyin Yuan <Yinyin.Yuan@cancer.org.uk>, Oscar Rueda <oscar.rueda@cancer.org.uk>,  Florian Markowetz <Florian.Markowetz@cancer.org.uk>
-Maintainer: Henrik Failmezger <failmezger@cip.ifi.lmu.de>, Yinyin Yuan
+Version: 1.4.2
+Date: 2012-10-01
+Author: Henrik Failmezger <failmezger@mpipz.mpg.de>, Yinyin Yuan <Yinyin.Yuan@cancer.org.uk>, Oscar Rueda <oscar.rueda@cancer.org.uk>,  Florian Markowetz <Florian.Markowetz@cancer.org.uk>
+Maintainer: Henrik Failmezger <failmezger@mpipz.mpg.de>, Yinyin Yuan
         <Yinyin.Yuan@cancer.org.uk>
 Description: CRImage provides functionality to process and analyze images, in particular to classify cells in biological images. Furthermore, in the context of tumor images, it provides functionality to calculate tumour cellularity.
 License: Artistic-2.0
@@ -22,7 +22,6 @@ Collate: plotCorrectedCN.R correctCopyNumber.R writeDensityImage.R
         findSlices.R parseFinalScan.R classificationAperio.R
         processAperio.R Phansalkar_threshold.R SauvolaThreshold.R
         calculateMeanStdTarget.R convertLABToRGB.R convertRGBToLAB.R
-        localORThreshold.R localOtsuThreshold.R calculateOtsu.R classifyPen.R getImageDistance.R hist3d.R labelCells.R
-		calculateThreshold.R localORThresholdNew.R localOtsuThresholdNew.R convertLABToRGBOld.R convertRGBToLABOld.R colorCorrectionOld.R
+        localORThreshold.R oregonThreshold.R localThreshold.R calculateOtsu.R classifyPen.R getImageDistance.R hist3d.R labelCells.R
 biocViews: CellBiology, Classification
 Packaged: 2011-11-01 06:07:04 UTC; biocbuild
