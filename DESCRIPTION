@@ -16,8 +16,7 @@ Collate: plotCorrectedCN.R correctCopyNumber.R writeDensityImage.R
         convertRGBToHSV.R convertHSVToRGB.R imageCompression.R
         createBinaryImage.R colorCorrection.R searchStructures.R
         segmentStructures.R classifyStructures.R numberOfNeighbors.R
-        segmentCytoplasma.R segmentImage.R createTrainingSet.R
-        createClassifier.R kernelSmoother.R paintCells.R
+        segmentCytoplasma.R segmentImage.R createClassifier.R kernelSmoother.R paintCells.R
         classifyCells.R determineCellularity.R calculateCellularity.R
         findSlices.R parseFinalScan.R classificationAperio.R
         processAperio.R Phansalkar_threshold.R SauvolaThreshold.R

@@ -96,10 +96,10 @@ function(imgFolder,pathToOutputFolder,numSlides,fontSize=10){
 		blockSlice[(i-1),]=c(name,slice,posBlockXSmall,posBlockYSmall,x,y)
 	}
 #label the positions of the subimages ## not working for mac, so check for system first!!
-	if(length(grep("mac",.Platform$pkgType))==0){
-	    font=drawfont(weight=600,size=fontSize)
-		smallImage=drawtext(smallImage,cbind(as.numeric(blockSlice[,3]),as.numeric(blockSlice[,4])),blockSlice[,1],font=font,col="black")
-	}
+	#if(length(grep("mac",.Platform$pkgType))==0){
+	#    font=drawfont(weight=600,size=fontSize)
+	#	smallImage=drawtext(smallImage,cbind(as.numeric(blockSlice[,3]),as.numeric(blockSlice[,4])),blockSlice[,1],font=font,col="black")
+	#}
 	writeImage(smallImage,file.path(pathToOutputFolder,"smallImage.jpg"))
 	colnames(blockSlice)=c("block","slice")
 	sizeO=c(widthO,heightO)

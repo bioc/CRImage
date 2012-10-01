@@ -72,9 +72,10 @@ fp=file.path(f,"pixelClassifier")
 load(fp)
 pixelClassifier=model
 pathToImage=file.path(f,"8905")
-pathToOutput=tempdir()
 
-processAperio(classifier=classifier,inputFolder=pathToImage,outputFolder=pathToOutput,identifier="Da",numSlides=1,cancerIdentifier="c",maxShape=800,minShape=40,failureRegion=2000,slideToProcess=1,KS=FALSE,colors=c("white","green","blue","brown"),classesToExclude=c('a','l','nl'),threshold="otsu",ksToExclude=c('l','nl'),pixelClassifier=pixelClassifier,classifyStructures=TRUE,densityToExclude=c('a'),numDensityWindows=8,resizeFactor=1.5,plotCellTypeDensity=FALSE,greyscaleImage=1)
+pathToOutput="" #specify an output folder here
+
+#processAperio(classifier=classifier,inputFolder=pathToImage,outputFolder=pathToOutput,identifier="Da",numSlides=1,cancerIdentifier="c",maxShape=800,minShape=40,failureRegion=2000,slideToProcess=1,KS=FALSE,colors=c("white","green","blue","brown"),classesToExclude=c('a','l','nl'),threshold="otsu",ksToExclude=c('l','nl'),pixelClassifier=pixelClassifier,classifyStructures=TRUE,densityToExclude=c('a'),numDensityWindows=8,resizeFactor=1.5,plotCellTypeDensity=FALSE,greyscaleImage=1)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
