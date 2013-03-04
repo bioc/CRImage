@@ -17,6 +17,7 @@
 \alias{determineCellularity}
 \alias{imageCompression}
 \alias{segmentStructures}
+\alias{plotImages}
 
 \title{Internal CRImage Functions}
 \description{
