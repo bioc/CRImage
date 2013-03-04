@@ -1,9 +1,9 @@
 labelCells <-
 function(img, segmentedImage,classes,classColours,nblocks=3,labeledPoints=NULL,filename=NULL,filenameImage=NULL,transformCoordinates=FALSE){
-	#Start positions for the hull
+#Start positions for the hull
 	oldX=NULL
 	oldY=NULL
-	#
+#
 	options(stringsAsFactors = FALSE)
 	f=computeFeatures.moment(segmentedImage)
 	print(f)
@@ -69,8 +69,9 @@ function(img, segmentedImage,classes,classColours,nblocks=3,labeledPoints=NULL,f
 	actPosition=blockPosition[blockPosition$block==actBlock,]
 	paintedNucleiN=paintedNuclei[actPosition$xs:actPosition$xe,actPosition$ys:actPosition$ye,]#y coordinates are traversed
 	paintedNucleiN=aperm(paintedNucleiN,c(2,1,3))#transpose image to get correct view
-	imgMatrix=imagematrix(paintedNucleiN)
-	plot.imagematrix(imgMatrix)
+#imgMatrix=imagematrix(paintedNucleiN)
+#plot.imagematrix(imgMatrix)
+	plotImage(paintedNucleiN)
 	if(dim(labeledPointsNoNuclei)[1]>0){
 		labeledPointsNoNucleiBlock=labeledPointsNoNuclei[labeledPointsNoNuclei$block==actBlock,]
 		xCoord=as.numeric(labeledPointsNoNucleiBlock$xLocal)
@@ -101,8 +102,9 @@ function(img, segmentedImage,classes,classColours,nblocks=3,labeledPoints=NULL,f
 		paintedNuclei[actPosition$xs:actPosition$xe,actPosition$ys:actPosition$ye,]=paintedNucleiSmall
 		paintedNuclei<<-paintedNuclei
 		paintedNucleiSmall=aperm(paintedNucleiSmall,c(2,1,3))#transpose image to get correct view
-		imgMatrix=imagematrix(paintedNucleiSmall)
-		plot.imagematrix(imgMatrix)
+#imgMatrix=imagematrix(paintedNucleiSmall)
+#plot.imagematrix(imgMatrix)
+		plotImage(paintedNucleiSmall)
 #find block specific points and use local coordinates
 		labeledPointsNoNucleiBlock=labeledPointsNoNuclei[labeledPointsNoNuclei$block==actBlock,]
 		points(labeledPointsNoNucleiBlock$xLocal,labeledPointsNoNucleiBlock$yLocal,col="red",pch="x")
@@ -223,11 +225,11 @@ function(img, segmentedImage,classes,classColours,nblocks=3,labeledPoints=NULL,f
 				actBlock<<-1
 			}
 			refresh()
-			#actPosition=blockPosition[blockPosition$block==actBlock,]
-			#paintedNucleiN=paintedNuclei[actPosition$xs:actPosition$xe,actPosition$ys:actPosition$ye,]
-			#imgMatrix=imagematrix(paintedNucleiN)
-			#plot.imagematrix(imgMatrix)
-			#title(main=description,sub = actValues, col.sub="black",cex.main= 0.8)
+#actPosition=blockPosition[blockPosition$block==actBlock,]
+#paintedNucleiN=paintedNuclei[actPosition$xs:actPosition$xe,actPosition$ys:actPosition$ye,]
+#imgMatrix=imagematrix(paintedNucleiN)
+#plot.imagematrix(imgMatrix)
+#title(main=description,sub = actValues, col.sub="black",cex.main= 0.8)
 			print(paste("Block number:",actBlock))
 			NULL
 		}
@@ -237,11 +239,11 @@ function(img, segmentedImage,classes,classColours,nblocks=3,labeledPoints=NULL,f
 				actBlock<<-(nblocks*nblocks)
 			}
 			refresh()
-		#actPosition=blockPosition[blockPosition$block==actBlock,]
-		#paintedNucleiN=paintedNuclei[actPosition$xs:actPosition$xe,actPosition$ys:actPosition$ye,]
-		#imgMatrix=imagematrix(paintedNucleiN)
-		#plot.imagematrix(imgMatrix)
-		#title(main=description,sub = actValues, col.sub="black",cex.main= 0.8)
+#actPosition=blockPosition[blockPosition$block==actBlock,]
+#paintedNucleiN=paintedNuclei[actPosition$xs:actPosition$xe,actPosition$ys:actPosition$ye,]
+#imgMatrix=imagematrix(paintedNucleiN)
+#plot.imagematrix(imgMatrix)
+#title(main=description,sub = actValues, col.sub="black",cex.main= 0.8)
 			print(paste("Block number:",actBlock))
 			NULL
 		}
@@ -268,67 +270,67 @@ function(img, segmentedImage,classes,classColours,nblocks=3,labeledPoints=NULL,f
 		oldY<<-clicked.y
 		point=round(c(clicked.x,clicked.y))
 		actPosition=blockPosition[blockPosition$block==actBlock,]
-		#transform local to global coordinates,coordinates are switched for image plots
+#transform local to global coordinates,coordinates are switched for image plots
 		point[1]=actPosition$xs+point[1]
 		point[2]=abs((actPosition$ye-actPosition$ys))-point[2]
 		point[2]=actPosition$ys+point[2]
-		#
+#
 		if(point[1]>=1 & point[1]<dim(segmentedImage)[1]&point[2]>=1 & point[2]<dim(segmentedImage)[2]){
 			index=segmentedImage[point[1],point[2]]
 			if(!activateHull){
 				if(remove==FALSE){
 					print("add point")
 					print(paste("X:",round(point[1]),"Y:",round(point[2]),"Class:",actClass,"Nucleus:",index))
-					#check if index already exists
-					#nucleiIndexToAdd=which(labeledPoints$index==index)
-					#if exists delete it
-					#if(length(nucleiIndexToAdd)>0 & index != 0){
-					#	print("Replace label")
-					#	labeledPoints<<-labeledPoints[-nucleiIndexToAdd,]
-					#}
+#check if index already exists
+#nucleiIndexToAdd=which(labeledPoints$index==index)
+#if exists delete it
+#if(length(nucleiIndexToAdd)>0 & index != 0){
+#	print("Replace label")
+#	labeledPoints<<-labeledPoints[-nucleiIndexToAdd,]
+#}
 					labeledPoints<<-rbind(labeledPoints,c(index,point[1],point[2],actClass,round(clicked.x),round(clicked.y),actBlock))
-			}else{
+				}else{
 					print("remove point")
 					print(paste("X:",round(point[1]),"Y:",round(point[2]),"Class:",actClass,"Nucleus:",index))
 					if(index>0){
 						nucleiIndexToRemove=which(labeledPoints$index==index)
-						#check if this index exists
+#check if this index exists
 						if(length(nucleiIndexToRemove)>0){
 							labeledPoints<<-labeledPoints[-nucleiIndexToRemove,]
 						}
-						#if data frame empty do new initialisation
+#if data frame empty do new initialisation
 						if(dim(labeledPoints)[1]==0){
 							labeledPoints= data.frame(t(rep(0,7)),stringsAsFactors=FALSE)
-							#you can change number_of_columns according to your need
+#you can change number_of_columns according to your need
 							colnames(labeledPoints)=c("index","x","y","classCell","xLocal","yLocal","block")
 							labeledPoints<<-labeledPoints
 						}
 					}
 				}
 			}
-			}else{
-				message("Point outside device")
-			}
-			NULL
-			#devset()
-			#	usr <<- par("usr")	
+		}else{
+			message("Point outside device")
 		}
+		NULL
+#devset()
+#	usr <<- par("usr")	
+	}
 #########################
 	
 	dragmousemove=function(buttons, x, y) {
 		if(activateHull){
 			clicked.x <- grconvertX(x, from = "ndc",to = "user")
 			clicked.y <- grconvertY(y, from = "ndc",to = "user")
-		
-			#print(paste("x:",clicked.x))
-			#print(paste("y:",clicked.y))
-			#print(paste("oldX:",oldX))
-			#print(paste("oldY:",oldY))
-			#print(paste("dist",sqrt((clicked.x-oldX)^2+(clicked.y-oldY)^2)))
+			
+#print(paste("x:",clicked.x))
+#print(paste("y:",clicked.y))
+#print(paste("oldX:",oldX))
+#print(paste("oldY:",oldY))
+#print(paste("dist",sqrt((clicked.x-oldX)^2+(clicked.y-oldY)^2)))
 			if(!is.null(oldX) & !is.null(oldY)){
 				if(sqrt((clicked.x-oldX)^2+(clicked.y-oldY)^2)>0.5){
 					"draw"
-					#print(paste("dist",sqrt((clicked.x-oldX)^2+(clicked.y-oldY)^2)))
+#print(paste("dist",sqrt((clicked.x-oldX)^2+(clicked.y-oldY)^2)))
 					
 					lines(c(oldX,clicked.x),c(oldY,clicked.y),col=classColours[which(classes==actClass)])
 					convHull<<-rbind(convHull,c(clicked.x,clicked.y))
@@ -337,56 +339,56 @@ function(img, segmentedImage,classes,classColours,nblocks=3,labeledPoints=NULL,f
 				}
 			}
 		}
-			NULL
+		NULL
 	}
 	dragmouseup <- function(buttons, x, y) {
 		if(activateHull){
-		if(!is.null(dim(convHull)[1])){
-			actPosition=blockPosition[blockPosition$block==actBlock,]
-			
-			convHull[,2]=abs((actPosition$ye-actPosition$ys)-convHull[,2])
-			convHull[,2]=actPosition$ys+convHull[,2]
-			convHull[,1]=actPosition$xs+convHull[,1]
-			
-			convHullS=convHull[sample(1:dim(convHull)[1],dim(convHull)[1],replace=F),]
-			#
-			
-			actPointsXYBlockIndex=which(xyCell[,1]<actPosition$xe & xyCell[,1]>=actPosition$xs & xyCell[,2]<actPosition$ye & xyCell[,2]>=actPosition$ys)
-			actPointsXYBlock=xyCell[actPointsXYBlockIndex,]
-			#transform local to global coordinates,coordinates are switched for image plots
-			#
-			#tr<-tri.mesh(convHullS[,1],convHullS[,2],"strip")
-			tr=chull(convHullS[,1],convHullS[,2])
-			#pointsInHull=in.convex.hull(tr,actPointsXYBlock[,1],actPointsXYBlock[,2])
-			pointsInHull=in.chull(actPointsXYBlock[,1],actPointsXYBlock[,2],convHullS[tr,1],convHullS[tr,2])
-			indexPointsInHull=actPointsXYBlockIndex[which(pointsInHull==1)]
-
-			#print(pointsInHull)
-			#print(index)
-			#print(replicate(length(index),actClass))
-			newPoints=cbind(indexPointsInHull,actPointsXYBlock[pointsInHull,1],actPointsXYBlock[pointsInHull,2],replicate(length(indexPointsInHull),actClass),actPointsXYBlock[pointsInHull,1],actPointsXYBlock[pointsInHull,2],replicate(length(indexPointsInHull),actBlock))
-			#######
-			#check if index already exists
-			existingIndices=intersect(labeledPoints$index,indexPointsInHull)
-			#if exists delete it
-			if(length(existingIndices)>0){
-				message("Replace label")
-				labeledPoints<<-labeledPoints[-existingIndices,]
+			if(!is.null(dim(convHull)[1])){
+				actPosition=blockPosition[blockPosition$block==actBlock,]
+				
+				convHull[,2]=abs((actPosition$ye-actPosition$ys)-convHull[,2])
+				convHull[,2]=actPosition$ys+convHull[,2]
+				convHull[,1]=actPosition$xs+convHull[,1]
+				
+				convHullS=convHull[sample(1:dim(convHull)[1],dim(convHull)[1],replace=F),]
+#
+				
+				actPointsXYBlockIndex=which(xyCell[,1]<actPosition$xe & xyCell[,1]>=actPosition$xs & xyCell[,2]<actPosition$ye & xyCell[,2]>=actPosition$ys)
+				actPointsXYBlock=xyCell[actPointsXYBlockIndex,]
+#transform local to global coordinates,coordinates are switched for image plots
+#
+#tr<-tri.mesh(convHullS[,1],convHullS[,2],"strip")
+				tr=chull(convHullS[,1],convHullS[,2])
+#pointsInHull=in.convex.hull(tr,actPointsXYBlock[,1],actPointsXYBlock[,2])
+				pointsInHull=in.chull(actPointsXYBlock[,1],actPointsXYBlock[,2],convHullS[tr,1],convHullS[tr,2])
+				indexPointsInHull=actPointsXYBlockIndex[which(pointsInHull==1)]
+				
+#print(pointsInHull)
+#print(index)
+#print(replicate(length(index),actClass))
+				newPoints=cbind(indexPointsInHull,actPointsXYBlock[pointsInHull,1],actPointsXYBlock[pointsInHull,2],replicate(length(indexPointsInHull),actClass),actPointsXYBlock[pointsInHull,1],actPointsXYBlock[pointsInHull,2],replicate(length(indexPointsInHull),actBlock))
+#######
+#check if index already exists
+				existingIndices=intersect(labeledPoints$index,indexPointsInHull)
+#if exists delete it
+				if(length(existingIndices)>0){
+					message("Replace label")
+					labeledPoints<<-labeledPoints[-existingIndices,]
+				}
+				
+######
+				colnames(newPoints)=c("index","x","y","classCell","xLocal","yLocal","block")
+#print(newPoints)
+#print(labeledPoints)
+				labeledPoints<<-rbind(labeledPoints,newPoints)
+#print(labeledPoints)
+				refresh()
+				clicked.x <- grconvertX(x, from = "ndc",to = "user")
+				clicked.y <- grconvertY(y, from = "ndc",to = "user")
+				oldX<<-NULL
+				oldY<<-NULL
+				convHull<<-c()
 			}
-			
-			######
-			colnames(newPoints)=c("index","x","y","classCell","xLocal","yLocal","block")
-			#print(newPoints)
-			#print(labeledPoints)
-			labeledPoints<<-rbind(labeledPoints,newPoints)
-			#print(labeledPoints)
-			refresh()
-			clicked.x <- grconvertX(x, from = "ndc",to = "user")
-			clicked.y <- grconvertY(y, from = "ndc",to = "user")
-			oldX<<-NULL
-			oldY<<-NULL
-			convHull<<-c()
-		}
 		}
 #usr <<- par("usr")
 		NULL
@@ -398,3 +400,4 @@ function(img, segmentedImage,classes,classColours,nblocks=3,labeledPoints=NULL,f
 #labeledPoints=labeledPoints[-which(labeledPoints[,1]==0),]
 	return(labeledPoints)
 }
+
