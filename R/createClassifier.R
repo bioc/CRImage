@@ -13,7 +13,7 @@ function(trainingData,cross=FALSE){
 		indToDelete=which(is.element(colnames(trainingData),c("index","classCell","m.cx","m.cy","g.edge","sizeCytoplasma","densityValues")))
 		trainingData=subset(trainingData,select=-c(indToDelete))
 		
-	model = svm(trainingData,as.factor(classes),type='C',kernel='radial')
+	model = svm(trainingData,as.factor(classes),type='C',kernel='radial',probability=TRUE)
 	allCrossValues=c()
 	if(cross==TRUE){
 		for (i in 1:10){
